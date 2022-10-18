@@ -1,0 +1,255 @@
+<odoo>
+    <data>
+
+        <record id="billing_cycle_view_form" model="ir.ui.view">
+            <field name="name">billing_cycle_view_form</field>
+            <field name="model">billing.cycle</field>
+            <field name="arch" type="xml">
+                <form string="Billing Cycle">
+                    <header>
+                        <button name="action_submit" type="object" string="Submit" class="oe_highlight" states="draft" />
+                        <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="open" />
+
+                        <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Verify Invoices" type="action" states="invoice_verification" />
+                        <button name="action_verify_done" type="object" string="Confirm Verification" class="oe_highlight" states="invoice_verification" />
+                        <button name="action_verify" type="object" string="Generate Bills" class="oe_highlight" states="gen_bill" />
+                        <button name="generate_disco_invoice" type="object" string="Generate Invoices" class="oe_highlight" states="gen_inv" />
+                        
+                        <button name="%(action_ebs_ocma_mro_application_transfer_wizard)d" class="oe_highlight" string="Apply MRO" type="action" states="mro_application" />
+
+                        <button name="action_reject" type="object" string="Reject" class="btn-danger" states="open" />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                             <button name="action_view_genco_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                                <field name="genco_invoices_count" string="Genco Bills" widget="statinfo"/>
+                            </button>
+                            <button name="action_view_disco_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                                <field name="disco_invoices_count" string="Disco Invoices" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="ref_sequence">Number</label>
+                            <h1>
+                                <field name="ref_sequence"/>
+                            </h1>
+                        </div>
+                        <div>
+                            <label for="title">Description</label>
+                            <field name="title" required="1" placeholder="Billing Process for the month of April 2022..."/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="month"/>
+                                <field name="year"/>
+                                <field name="days_in_month"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="ref_no"/>
+                                <field name="hours_in_month"/>
+                                <field name="transmission_loss_factor"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="cbn_average"/>
+                                <field name="nbet_dist_rate"/>
+                                <field name="nbet_dist_azura"/>
+                                <field name="agip_quaterly_index"/>
+                                <field name="azura_fx_date"/>
+                                <field name="azura_fx_value"/>
+                            </group>
+                            <group>
+                                <field name="additional_notes"/>
+                                <field name="user_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <!-- <page string="GENCOs Invoice Verification">
+                                <field name="genco_inv_verify"/>
+
+                            </page>
+                            <page string="GENCOs Invoice Verification (Dollars)">
+                                <field name="genco_inv_verify_dollars"/>
+                            </page>
+                            <page string="Disco Receipts">
+                                <field name="receipts_ids"/>
+                            </page>
+                            <page string="GENCOs Payments">
+                                <field name="payments_ids"/>
+                            </page> -->
+                            <page name="genco_parameters" string="Genco Parameters">
+                                <field name="bc_genco_parameter_ids" nolabel="1">
+                                    <!-- <tree limit="10"> -->
+                                    <tree editable="bottom">
+                                        <field name="verified" />
+                                        <field name="partner_id" />
+                                        <field name="name" />
+                                        <field name="capacity_sent_out_mw" sum="Total Capacity Sent Out(mw)" width="0.9" optional="show"/>
+                                        <field name="energy_sent_out_kwh" sum="Total Energy Sent Out(Kwh)" width="0.5" optional="show"/>
+                                        <field name="capacity_import" sum="Total capacity Import" width="0.5" optional="show"/>
+                                        <field name="energy_import" sum="Total Energy import" width="0.5" optional="show"/>
+                                        <field name="invoiced_capacity" sum="Total Invoiced Capacity" width="0.5" optional="show"/>
+                                        <field name="invoiced_energy" sum="Total Invoiced Energy" width="0.5" optional="show"/>
+                                        <field name="capacity" sum="Total Capacity" width="0.5" optional="show"/>
+                                        <field name="energy_sent_out_mwh" sum="Total Energy Sent Out(Mwh)" width="0.5" optional="show"/>
+                                        <field name="capacity_payment" sum="Total Capacity Payment" width="0.5" optional="show"/>
+                                        <field name="energy_payment" sum="Total Energy Payment" width="0.5" optional="show"/>
+                                        <field name="total_payment" sum="Total Payment" width="0.5" optional="show"/>
+                                        <field name="billing_cycle_id" context="{'default_billing_cycle_id': active_id}" invisible="1" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="parameters" string="Genco Receieved">
+                                <field name="nbet_genco_parameter_ids" nolabel="1">
+                                    <tree editable="bottom" limit="10">
+                                        <field name="verified" />
+                                        <field name="partner_id" />
+                                        <field name="name" />
+                                        <field name="capacity_payment" sum="Total Capacity Payment" width="0.5" optional="show"/>
+                                        <field name="energy_payment" sum="Total Energy Payment" width="0.5" optional="show"/>
+                                        <field name="total_payment" sum="Total Payment" width="0.5" optional="show"/>
+                                        <field name="billing_cycle_id" context="{'default_billing_cycle_id': active_id}" invisible="1" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="parameters" string="Disco Parameters">
+                                <field name="bc_disco_parameter_ids" nolabel="1">
+                                    <!-- <tree limit="10"> -->
+                                    <tree editable="bottom">
+                                        <field name="partner_id" />
+                                        <field name="name" />
+                                        <field name="capacity_delivered" sum="Total Capacity Delivered" width="0.5" optional="show"/>
+                                        <field name="energy_delivered" sum="Total Energy Delivered" width="0.5" optional="show"/>
+                                        <field name="capacity_shared" sum="Total Energy Delivered" width="0.5" optional="show"/>
+                                        <field name="energy_shared" sum="Total Energy Shared" width="0.5" optional="show"/>
+                                        <field name="percentage_total" sum="Total Percentage Total" width="0.5" optional="show"/>
+                                        <field name="portion_capacity" sum="Total Portion Capacity" width="0.5" optional="show"/>
+                                        <field name="portion_energy" sum="Total Portion Energy" width="0.5" optional="show"/>
+                                        <field name="invoice_value" sum="Total Invoice Value" width="0.5" optional="show"/>
+                                        <field name="billing_cycle_id" context="{'default_billing_cycle_id': active_id}" invisible="1" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group>
+                            <group string='GenCo'>
+                                <field name="genco_total_capacity" />
+                                <field name="genco_total_energy_sent_out" />
+                            </group>
+                            <group string='DisCo'>
+                                <field name="disco_total_capacity_delivered" />
+                                <field name="disco_total_energy_delivered" />
+                            </group>
+                        </group>
+                        <group>
+                            <field name="capacity_diff" />
+                            <field name="energy_diff" />
+                            <field name="disco_capacity_delivered" />
+                            <field name="disco_energy_delivered" />
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="genco_verify_view_tree" model="ir.ui.view">
+            <field name="name">genco_verify_view_tree</field>
+            <field name="model">genco.verify</field>
+            <field name="arch" type="xml">
+                <tree string="GENCO Invoice Verification">
+                    <field name="genco_id"/>
+                    <field name="capacity_payment" sum="Total capacity payment"/>
+                    <field name="energy_payment" sum="Total energy payment"/>
+                    <field name="startup_payment" sum="Total startup payment"/>
+                    <field name="interest_payment" sum="Total interest payment"/>
+                    <field name="total_payment" sum="Total Payments"/>
+                    <field name="nbet_computed" sum="Total"/>
+                    <field name="date_received"/>
+                    <field name="due_date"/>
+                    <field name="cus_invoice_ref"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="genco_inv_verify_dollars_tree" model="ir.ui.view">
+            <field name="name">genco_verify_dollars_view_tree</field>
+            <field name="model">genco.verify_dollars</field>
+            <field name="arch" type="xml">
+                <tree string="GENCO Invoice Verification">
+                    <field name="genco_id"/>
+                    <field name="capacity_payment" sum="Total capacity payment"/>
+                    <field name="energy_payment" sum="Total energy payment"/>
+                    <field name="startup_payment" sum="Total startup payment"/>
+                    <field name="interest_payment" sum="Total interest payment"/>
+                    <field name="total_payment" sum="Total Payments"/>
+                    <field name="nbet_computed" sum="Total"/>
+                    <field name="date_received"/>
+                    <field name="due_date"/>
+                    <field name="cus_invoice_ref"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="genco_verify_view_form" model="ir.ui.view">
+            <field name="name">genco_verify_view_form</field>
+            <field name="model">genco.verify</field>
+            <field name="arch" type="xml">
+                <form string="genco invoice verification form">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="genco_id"/>
+                                <field name="date_received"/>
+                                <field name="due_date"/>
+                                <field name="cus_invoice_ref"/>
+                            </group>
+                            <group>
+                                <field name="capacity_payment"/>
+                                <field name="energy_payment"/>
+                                <field name="startup_payment"/>
+                                <field name="interest_payment"/>
+                                <field name="total_payment"/>
+                                <field name="nbet_computed"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="genco_inv_verify_dollars_form" model="ir.ui.view">
+            <field name="name">genco_verify_dollars_view_form</field>
+            <field name="model">genco.verify_dollars</field>
+            <field name="arch" type="xml">
+                <form string="genco invoice verification form">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="genco_id"/>
+                                <field name="date_received"/>
+                                <field name="due_date"/>
+                                <field name="cus_invoice_ref"/>
+                            </group>
+                            <group>
+                                <field name="capacity_payment"/>
+                                <field name="energy_payment"/>
+                                <field name="startup_payment"/>
+                                <field name="interest_payment"/>
+                                <field name="total_payment"/>
+                                <field name="nbet_computed"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
