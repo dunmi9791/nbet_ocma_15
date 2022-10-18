@@ -4,11 +4,35 @@
             <field name="name">ebs_ocma.genco.invoice.transfer.wizard.form</field>
             <field name="model">ebs_ocma.genco.invoice.transfer</field>
             <field name="arch" type="xml">
-                <form string="Genco Invoice Generation">
+                <form string="Genco Bill Verification">
                     <group>
                         <field name="billing_cycle_id"/>
                     </group>
-                    <notebook>
+
+                    <button name="select_all_nbet" type="object" string="Select All"/>
+
+                    <separator/>
+
+                    <field name="verification_line_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="partner_id" />
+
+                            <field name="nbet_verified" />
+                            <field name="nbet_capacity_payment" sum="NBET Total Capacity Payment" width="0.9" optional="show"/>
+                            <field name="nbet_energy_payment" sum="NBET Total Energy Payment" width="0.5" optional="show"/>
+                            <field name="nbet_total_payment" sum="NBET Total Payment" width="0.5" optional="show"/>
+
+                            <field name="genco_verified" optional="show"/>
+                            <field name="genco_capacity_payment" sum="Genco Total Capacity Payment" width="0.5" optional="show"/>
+                            <field name="genco_energy_payment" sum="Genco Total Energy Payment" width="0.5" optional="show"/>
+                            <field name="genco_total_payment" sum="Genco Total Payment" width="0.5" optional="show"/>
+
+                            <field name="remarks" optional="show"/>
+                            
+                            <field name="verification_id" context="{'default_verification_id': active_id}" invisible="1" />
+                        </tree>
+                    </field>
+                    <!-- <notebook>
                         <page name="genco_parameters" string="Genco Parameters">
                             <field name="bc_genco_parameter_ids" nolabel="1">
                                 <tree editable="bottom">
@@ -43,7 +67,7 @@
                                 </tree>
                             </field>
                         </page>
-                    </notebook>
+                    </notebook> -->
                     <footer>
                         <button string="Verify" confirm="Are you sure? Do not forget to cross check" name="verify_invoice" type="object" class="btn-primary"/>
                         <button string="Cancel" class="btn-default" special="cancel" />
