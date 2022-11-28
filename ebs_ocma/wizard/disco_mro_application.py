@@ -84,61 +84,13 @@ class MROApplication(models.TransientModel):
                 'invoice_line_ids': [
                 (0, 0, {
                     'display_type': 'line_section',
-                    'name': 'ENERGY CHARGE',
+                    'name': 'MRO',
                 })
                 ,(0, 0, {
                     'name': 'Total Disco Share of Energy Received (MWh)',
                     'quantity': 1, 
                     'account_id': 17, # account to be set
                     'price_unit': invoice_value,
-                })
-                ,(0, 0, {
-                    'name': 'Total Energy Received by %s Disco (MWh)' % partner_id.name,
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
-                })
-                ,(0, 0, {
-                    'name': 'percentage of Total Energy Received by %s Disco' % partner_id.name,
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
-                })
-                , (0, 0, {
-                        'display_type': 'line_section',
-                        'name': 'CAPACITY CHARGE',
-                    })
-                ,(0, 0, {
-                    'name': 'Total Disco Share of Capacity (MW)',
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
-                })
-                ,(0, 0, {
-                    'name': '%s Disco Share of Capacity (MW)' % partner_id.name,
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
-                })
-                , (0, 0, {
-                        'display_type': 'line_section', 
-                        'name': 'SUPPLEMENTARY COSTS',
-                    })
-                , (0, 0, {
-                    'name': 'Total Start Up Costs',
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
-                })
-                , (0, 0, {
-                        'display_type': 'line_section',
-                        'name': 'PREVIOUS BALANCE CARRIED FORWARD',
-                })
-                ,(0, 0, {
-                    'name': str(f"Credit Note for {partner_id.name}"),
-                    'quantity': 1, 
-                    'account_id': 17, # account to be set
-                    'price_unit': 0,
                 })],
             }
             disco_invoice_id = self.env['account.move'].create(invoice_vals)
@@ -149,7 +101,10 @@ class MROApplication(models.TransientModel):
         for rec in self:
             for line in rec.mro_line_ids:
                 if line.percent_mro > 0:
-                    rec._create_disco_credit_note(partner_id=line.partner_id, invoice_value=(100 - line.percent_mro / 100) * line.invoice_value)
+                    percentage_mro = (float(100) - line.percent_mro) / float(100)
+                    credit_invoice_value = line.invoice_value * percentage_mro
+                    rec._create_disco_credit_note(partner_id=line.partner_id, invoice_value = credit_invoice_value)
+            rec.billing_cycle_id.state = 'invoice_verification'
 
 class MROApplicationLines(models.TransientModel):
     _name = 'ebs_ocma.mro.application.lines'

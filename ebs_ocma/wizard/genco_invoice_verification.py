@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from email.policy import default
 from odoo import models, fields, api, _
 
 class CreateTransfer(models.TransientModel):
@@ -58,8 +59,14 @@ class CreateTransfer(models.TransientModel):
             for line in rec.verification_line_ids:
                 line.write({
                     'nbet_verified': True
-                }) 
-        return True
+                })
+        return {
+                'view_mode': 'form',
+                'res_model': self._name,
+                'res_id': self.id,
+                'type': 'ir.actions.act_window',
+                }
+
 
 class CreateTransfer(models.TransientModel):
     _name = 'ebs_ocma.genco.invoice.transfer.lines'
@@ -72,6 +79,8 @@ class CreateTransfer(models.TransientModel):
     nbet_capacity_payment = fields.Float('NBET Capacity Payment')
     nbet_energy_payment = fields.Float('NBET Energy Payment')
     nbet_total_payment = fields.Float('NBET Total Payment')
+
+    space = fields.Char('  ', readonly=True, default='|')
 
     genco_verified = fields.Boolean(string='GENCO verified invoice')
     genco_capacity_payment = fields.Float('GENCO Capacity Payment')

@@ -10,9 +10,9 @@
                         <button name="action_submit" type="object" string="Submit" class="oe_highlight" states="draft" />
                         <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="open" />
 
-                        <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Verify Invoices" type="action" states="invoice_verification" />
+                        <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Verify Bills" type="action" states="invoice_verification" />
                         <button name="action_verify_done" type="object" string="Confirm Verification" class="oe_highlight" states="invoice_verification" />
-                        <button name="action_verify" type="object" string="Generate Bills" class="oe_highlight" states="gen_bill" />
+                        <button name="action_verify" type="object" string="Generate Bills" class="oe_highlight" states="invoice_verification,gen_bill" />
                         <button name="generate_disco_invoice" type="object" string="Generate Invoices" class="oe_highlight" states="gen_inv" />
                         
                         <button name="%(action_ebs_ocma_mro_application_transfer_wizard)d" class="oe_highlight" string="Apply MRO" type="action" states="mro_application" />

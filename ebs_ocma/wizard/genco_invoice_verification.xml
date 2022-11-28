@@ -22,6 +22,8 @@
                             <field name="nbet_energy_payment" sum="NBET Total Energy Payment" width="0.5" optional="show"/>
                             <field name="nbet_total_payment" sum="NBET Total Payment" width="0.5" optional="show"/>
 
+                            <field name="space"/>
+
                             <field name="genco_verified" optional="show"/>
                             <field name="genco_capacity_payment" sum="Genco Total Capacity Payment" width="0.5" optional="show"/>
                             <field name="genco_energy_payment" sum="Genco Total Energy Payment" width="0.5" optional="show"/>

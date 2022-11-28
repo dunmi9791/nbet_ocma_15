@@ -94,17 +94,18 @@ class BillingCycle(models.Model):
     state = fields.Selection([
         ('draft', 'New'),
         ('open', 'Validate'),
-        ('invoice_verification', 'Bills Verification'),
-        ('gen_bill', 'Generate Verified Bills'),
         ('gen_inv', 'Generate Invoices'),
         ('mro_application', 'MRO Application'),
+        ('invoice_verification', 'Bills Verification'),
+        ('gen_bill', 'Generate Verified Bills'),
     ], string='state', default="draft", help="A new record is in draft, once it is validated, it goes to open and then it is approved in Done state")
     
     def action_submit(self):
         self.state='open'
         
     def action_approve(self):
-        self.state='invoice_verification'
+        # self.state='invoice_verification'
+        self.state='gen_inv'
 
     def action_verify_done(self):
         self.state='gen_bill'
@@ -399,7 +400,7 @@ class BillingCycle(models.Model):
     def action_verify(self):
         for rec in self:
             rec.generate_genco_invoice()
-            rec.write({'state': 'gen_inv'})
+            # rec.write({'state': 'gen_inv'})
             for invoice in rec.genco_invoice_ids:
                 if invoice.amount_total > 0 :
                     # invoice.action_invoice_open()
@@ -511,6 +512,7 @@ class BillingCycle(models.Model):
                 # rec.disco_invoicing_ids += new_disco_invoicing
                 # rec._create_journal_entries(partner=line.partner_id)
                 rec._create_disco_invoice(partner_id=line.partner_id, ref=line.name, invoice_value=line.invoice_value, origin=self.ref_no)
+            # rec.write({'state': 'invoice_verification'})
             rec.write({'state': 'mro_application'})
             
     
