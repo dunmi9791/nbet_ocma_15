@@ -1,0 +1,147 @@
+<odoo>
+  <data>
+     <record id="inherit_crossovered_budget_view_form" model="ir.ui.view">
+          <field name="name">crossovered_budget_form_inherit</field>
+          <field name="model">budget.budget</field>
+          <field name="inherit_id" ref="base_account_budget.crossovered_budget_view_form"/>
+          <field name="arch" type="xml">
+              <xpath expr="//button[@name='action_budget_draft']" position="after">
+                  <button string="Forecast" name="create_forecast_lines" states="draft" type="object"/>
+
+              </xpath>
+              <sheet position="inside">
+                  <div name="button_box" >
+                      <button class="oe_stat_button" type="action" name="open_budget_lines"
+                            icon="fa-car">
+                            <field string="Budget Lines" name="budget_line_count" widget="statinfo"/>
+                        </button>
+                  </div>
+              </sheet>
+
+
+          </field>
+      </record>
+      <record id="budget_lines_tree" model="ir.ui.view">
+        <field name="name">budget.lines.tree</field>
+        <field name="model">budget.lines</field>
+        <field name="arch" type="xml">
+            <tree string="Budget Lines" create="true" delete="true" editable="bottom">
+                <field name="general_budget_id"/>
+                <field name="analytic_account_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="planned_amount"/>
+            </tree>
+        </field>
+    </record>
+      <record id="budget_forcast_tree" model="ir.ui.view">
+        <field name="name">budget.forecast.tree</field>
+        <field name="model">budget.forecast</field>
+        <field name="arch" type="xml">
+            <tree string="Budget Forcast" create="true" delete="true" editable="bottom">
+                <field name="budget_line"/>
+                <field name="planned_amount"/>
+                <field name="january"/>
+                <field name="february"/>
+                <field name="march"/>
+                <field name="april"/>
+                <field name="may"/>
+                <field name="june"/>
+                <field name="july"/>
+                <field name="august"/>
+                <field name="september"/>
+                <field name="october"/>
+                <field name="november"/>
+                <field name="december"/>
+            </tree>
+        </field>
+    </record>
+
+      <!-- Inherit Form View to Modify it -->
+      <record id="budget_form inherit" model="ir.ui.view">
+          <field name="name">budget.form.inherit</field>
+          <field name="model">budget.budget</field>
+          <field name="inherit_id" ref="base_account_budget.crossovered_budget_view_form"/>
+          <field name="arch" type="xml">
+
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='practical_amount']" position="before">
+                        <field name ="released_amount" sum="Released Amount"/>
+                        <field name ="actual_amount" sum="Actual Amount"/>
+               </xpath>
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='theoritical_amount']" position="replace">
+                        <field name ="percentage_released" widget="percentage"/>
+               </xpath>
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='paid_date']" position="replace">
+
+               </xpath>
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='practical_amount']" position="replace">
+
+               </xpath>
+              <xpath expr="//notebook" position="inside">
+                  <page string="Budget Forecast">
+                      <field name="forecast_lines"/>
+
+                  </page>
+
+              </xpath>
+
+          </field>
+      </record>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="nbet15_cus.list">
+      <field name="name">nbet15_cus list</field>
+      <field name="model">nbet15_cus.nbet15_cus</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="nbet15_cus.action_window">
+      <field name="name">nbet15_cus window</field>
+      <field name="res_model">nbet15_cus.nbet15_cus</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="nbet15_cus.action_server">
+      <field name="name">nbet15_cus server</field>
+      <field name="model_id" ref="model_nbet15_cus_nbet15_cus"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="nbet15_cus" id="nbet15_cus.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="nbet15_cus.menu_1" parent="nbet15_cus.menu_root"/>
+    <menuitem name="Menu 2" id="nbet15_cus.menu_2" parent="nbet15_cus.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="nbet15_cus.menu_1_list" parent="nbet15_cus.menu_1"
+              action="nbet15_cus.action_window"/>
+    <menuitem name="Server to list" id="nbet15_cus" parent="nbet15_cus.menu_2"
+              action="nbet15_cus.action_server"/>
+-->
+  </data>
+</odoo>
