@@ -20,13 +20,16 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'account', 'base_accounting_kit'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'reports/report.xml',
+        'reports/payment_voucher.xml',
+        'reports/voucher.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

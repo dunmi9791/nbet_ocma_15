@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payment_voucher">
+        <t t-call="web.basic_layout">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="9"/>
+            <t t-foreach="docs" t-as="doc">
+                <t t-name="report_document">
+                    <div class="page mt32" style="max-width: 1110px; font-size: 10pt;">
+                        <div class="col-12 text-center">
+                            <span style="font-weight:900; font-size:26px;" t-field="doc.company_id.name"/>
+                            <br/>
+                            <span class="font-address" style="font-weight: bold; font-size:14;">
+                                <span t-field="doc.company_id.street"/>,
+                                <span t-field="doc.company_id.street2"/>,
+                                <span t-field="doc.company_id.city"/>,
+                                <span t-field="doc.company_id.state_id"/>
+                                <br/>
+                            </span>
+                        </div>
+                        <div class="col-12">
+                            <br/>
+                            <br/>
+                            <div style="font-size:20px;">
+                                <center><strong><span>PAYMENT VOUCHER</span></strong></center>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="row">
+                                <div class="col-8">
+                                </div>
+                                <div style="text-align:left">
+                                    Number
+                                </div>
+                                <div style="text-align:right">
+                                    Dated
+                                </div>
+                            </div>
+                            </div>
+                        <div class="row">
+                                <div class="col-12">
+                                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
+                                        <thead style="display: table-row-group">
+                                            <tr>
+                                                <th class="text-center" style="width: 30%" scope="col">Journal</th>
+                                                <th class="text-center" style="width: 70%" scope="col">Coverage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+
+
+
+                        
+                        <div>
+                            <div class="row">
+                                <div class="col-8">
+                                </div>
+                                <div class="col-4 text-left">
+                                    RECEIVED BY:__________________________________
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                </div>
+                                <div class="col-4 text-left">
+                                    DATE:___________________________________________
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="page-break-after: always;"/>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -17,7 +17,7 @@ class CrossoveredBudget(models.Model):
         comodel_name='budget.forecast',
         inverse_name='budget_id',
         string='Forecast lines',
-        required=False)
+        required=False, ondelete='cascade')
     forecast_done = fields.Binary(string="Forecast Done",  )
 
     def get_budget_count(self):
@@ -73,6 +73,14 @@ class CrossoveredBudgetLines(models.Model):
     percentage_released = fields.Float(
         compute='_compute_percentage_released', string='Percentage on Released',
         help="Comparison between practical and released amount. This measure tells you if you are below or over budget.")
+    company_id = fields.Many2one('res.company', string='', required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id)
+    currency_id = fields.Many2one('res.currency', compute='_compute_currency', store=True, string="Currency")
+
+
+    @api.depends('company_id')
+    def _compute_currency(self):
+        self.currency_id = self.company_id.currency_id or self.env.user.company_id.currency_id
 
     # the percentage field was reworked to compute against the planned amount instead of theoretical
 
