@@ -1,39 +1,19 @@
 <odoo>
   <data>
-<!--     <record id="inherit_crossovered_budget_view_form" model="ir.ui.view">-->
-<!--          <field name="name">crossovered_budget_form_inherit</field>-->
-<!--          <field name="model">budget.budget</field>-->
-<!--          <field name="inherit_id" ref="base_account_budget.crossovered_budget_view_form"/>-->
-<!--          <field name="arch" type="xml">-->
-<!--              <xpath expr="//button[@name='action_budget_draft']" position="after">-->
-<!--                  <button string="Forecast" name="create_forecast_lines" states="draft" type="object"/>-->
 
-<!--              </xpath>-->
-<!--              <sheet position="inside">-->
-<!--                  <div name="button_box" >-->
-<!--                      <button class="oe_stat_button" type="action" name="open_budget_lines"-->
-<!--                            icon="fa-car">-->
-<!--                            <field string="Budget Lines" name="budget_line_count" widget="statinfo"/>-->
-<!--                        </button>-->
-<!--                  </div>-->
-<!--              </sheet>-->
-
-
-<!--          </field>-->
-<!--      </record>-->
-      <record id="budget_lines_tree" model="ir.ui.view">
-        <field name="name">budget.lines.tree</field>
-        <field name="model">budget.lines</field>
-        <field name="arch" type="xml">
-            <tree string="Budget Lines" create="true" delete="true" editable="bottom">
-                <field name="general_budget_id"/>
-                <field name="analytic_account_id"/>
-                <field name="date_from"/>
-                <field name="date_to"/>
-                <field name="planned_amount"/>
-            </tree>
-        </field>
-    </record>
+<!--      <record id="budget_lines_tree" model="ir.ui.view">-->
+<!--        <field name="name">budget.lines.tree</field>-->
+<!--        <field name="model">crossovered.budget.lines</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree string="Budget Lines" create="true" delete="true" editable="bottom">-->
+<!--                <field name="general_budget_id"/>-->
+<!--                <field name="analytic_account_id"/>-->
+<!--                <field name="date_from"/>-->
+<!--                <field name="date_to"/>-->
+<!--                <field name="planned_amount"/>-->
+<!--            </tree>-->
+<!--        </field>-->
+<!--    </record>-->
       <record id="budget_forcast_tree" model="ir.ui.view">
         <field name="name">budget.forecast.tree</field>
         <field name="model">budget.forecast</field>
@@ -60,20 +40,20 @@
       <!-- Inherit Form View to Modify it -->
       <record id="budget_form_inherit" model="ir.ui.view">
           <field name="name">budget.form.inherit</field>
-          <field name="model">budget.budget</field>
-          <field name="inherit_id" ref="base_account_budget.crossovered_budget_view_form"/>
+          <field name="model">crossovered.budget</field>
+          <field name="inherit_id" ref="account_budget.crossovered_budget_view_form"/>
           <field name="arch" type="xml">
-              <xpath expr="//field[@name='budget_line']/tree/field[@name='practical_amount']" position="before">
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='practical_amount']" position="before">
                         <field name ="released_amount" sum="Released Amount"/>
                         <field name ="actual_amount" sum="Actual Amount"/>
                </xpath>
-              <xpath expr="//field[@name='budget_line']/tree/field[@name='theoretical_amount']" position="replace">
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='theoritical_amount']" position="replace">
                         <field name ="percentage_released" widget="percentage"/>
                </xpath>
-              <xpath expr="//field[@name='budget_line']/tree/field[@name='paid_date']" position="replace">
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='paid_date']" position="replace">
 
                </xpath>
-              <xpath expr="//field[@name='budget_line']/tree/field[@name='practical_amount']" position="replace">
+              <xpath expr="//field[@name='crossovered_budget_line']/tree/field[@name='practical_amount']" position="replace">
 
                </xpath>
               <xpath expr="//notebook" position="inside">
@@ -88,8 +68,8 @@
 
         <record model="ir.ui.view" id="asset_documents">
             <field name="name">account.asset.inherit</field>
-            <field name="model">account.asset.asset</field>
-            <field name="inherit_id" ref="base_accounting_kit.view_account_asset_asset_form"/>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_form"/>
             <field name="arch" type="xml">
 
                 <xpath  expr="//notebook[last()]" position="inside">

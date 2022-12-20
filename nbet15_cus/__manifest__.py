@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'base_accounting_kit'],
+    'depends': ['base', 'account', 'budget_releases', ],
 
     # always loaded
     'data': [

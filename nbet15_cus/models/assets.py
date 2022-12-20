@@ -10,7 +10,7 @@ from odoo.exceptions import UserError, ValidationError
 
 
 class AccountAsset(models.Model):
-    _inherit = 'account.asset.asset'
+    _inherit = 'account.asset'
 
     assigned_to = fields.Many2one(
         comodel_name='res.users',

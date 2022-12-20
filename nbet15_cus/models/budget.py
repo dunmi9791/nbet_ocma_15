@@ -10,7 +10,7 @@ from odoo.exceptions import UserError, ValidationError
 
 
 class CrossoveredBudget(models.Model):
-    _inherit = 'budget.budget'
+    _inherit = 'crossovered.budget'
 
     budget_line_count = fields.Integer(string="Budget Lines", compute='get_budget_count', )
     forecast_lines = fields.One2many(
@@ -19,18 +19,19 @@ class CrossoveredBudget(models.Model):
         string='Forecast lines',
         required=False, ondelete='cascade')
     forecast_done = fields.Binary(string="Forecast Done",  )
+    creating_user_id = fields.Many2one(comodel_name='res.users',)
 
     def get_budget_count(self):
-        count = self.env['budget.lines'].search_count([('budget_id', '=', self.id)])
+        count = self.env['crossovered.budget.lines'].search_count([('budget_id', '=', self.id)])
         self.budget_line_count = count
 
 
     def open_budget_lines(self):
         return {
             'name': _('budget_lines'),
-            'domain': [('id', 'in', budget.lines)],
+            'domain': [('id', 'in', crossovered_budget_line)],
             'view_type': 'form',
-            'res_model': 'budget.lines',
+            'res_model': 'crossovered.budget.lines',
             'view_id': 'budget_lines_tree',
             'view_mode': 'tree,form',
             'type': 'ir.actions.act_window',
@@ -42,9 +43,9 @@ class CrossoveredBudget(models.Model):
             msg = _('Forecast Lines Already entered')
             raise UserError(msg)
         else:
-            for line in self.budget_line:
+            for line in self.crossovered_budget_line:
                 forecast_line = {
-                    'budget_line': line.analytic_account_id.id,
+                    'crossovered_budget_line': line.analytic_account_id.id,
                     'budget_id': self.id,
                     'planned_amount': line.planned_amount,
 
@@ -55,7 +56,7 @@ class CrossoveredBudget(models.Model):
 
 
 class CrossoveredBudgetLines(models.Model):
-    _inherit = 'budget.lines'
+    _inherit = 'crossovered.budget.lines'
 
     released_amount = fields.Monetary(
         string='Released Amount',compute='_compute_released_amount',
@@ -76,7 +77,6 @@ class CrossoveredBudgetLines(models.Model):
     company_id = fields.Many2one('res.company', string='', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id)
     currency_id = fields.Many2one('res.currency', compute='_compute_currency', store=True, string="Currency")
-
 
     @api.depends('company_id')
     def _compute_currency(self):
@@ -122,7 +122,7 @@ class BudgetForecast(models.Model):
         comodel_name='account.analytic.account',
         string='Budget_line',
         required=False)
-    budget_id = fields.Many2one(comodel_name='budget.budget', string="Budget")
+    budget_id = fields.Many2one(comodel_name='crossovered.budget', string="Budget")
     currency_id = fields.Many2one('res.currency', compute='_compute_currency', store=True, string="Currency")
     company_id = fields.Many2one('res.company', string='Branch', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id)
