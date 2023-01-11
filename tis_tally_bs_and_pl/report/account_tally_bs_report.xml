@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="action_report_tally_bs"
+                model="account.financial.report"
+                string="Financial report"
+                report_type="qweb-pdf"
+                name="tis_tally_bs_and_pl.report_tally_bs"
+                file="tis_tally_bs_and_pl.report_tally_bs"
+        />
+        <report
+            id="action_report_tally_bs_xls"
+            model="account.financial.report"
+            string="Balance Sheet Excel Report"
+            report_type="xlsx"
+            name="tis_tally_bs_and_pl.report_tally_bs_xls.xslx"
+            file="tis_tally_bs_and_pl.report_tally_bs_xls.xslx"
+            menu="False"
+            attachment_use="False"/>
+    </data>
+</odoo>
