@@ -700,6 +700,14 @@ class NBETGencoBCParaemeter(models.Model):
     capacity_payment = fields.Float('Capacity Payment')
     energy_payment = fields.Float('Energy Payment')
     total_payment = fields.Float('Total Payment')
+    gas_element = fields.Float('Gas Invoice and Transport')
+    percent_gas = fields.Float('% Gas INV to Genco INV')
+    genco_portion_market = fields.Float('Genco Portion of Market Payment')
+    percent_payment = fields.Float('% Payment')
+    genco_shortfall = fields.Float('Genco Tariff Shortfall')
+    percent_ts_payment = fields.Float('% TS Payment')
+    total_payment_genco = fields.Float('Total Payment to Genco')
+    market_percent_payment = fields.Float('Market % Payment')
 
     billing_cycle_id = fields.Many2one(comodel_name='billing.cycle', string="Billing Cycle")
 

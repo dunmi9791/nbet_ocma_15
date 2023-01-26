@@ -50,7 +50,7 @@
 
 	'depends': ['base', 'mail', 'account', 'sale'],
 
-	'auto_install': True,
+	'auto_install': False,
 
 	'data': ['security/ir.model.access.csv', 'data/ks_dynamic_financial_report.xml', 'security/ks_access_file.xml', 'views/ks_mail_template.xml', 'views/ks_searchtemplate.xml', 'views/ks_base_template.xml', 'views/ks_res_config_settings.xml'],
 
