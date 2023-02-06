@@ -58,6 +58,16 @@
         <p class="oe_no_content_create">Click to create a new rate</p>
       </field>
     </record>
+    <record id="hydro_rate_view_action" model="ir.actions.act_window">
+      <field name="name">Rate</field>
+      <field name="res_model">hydro.rates</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new rate</p>
+      </field>
+    </record>
 
     <record id="myto_rate_category_view_action" model="ir.actions.act_window">
       <field name="name">Rate Category</field>
@@ -69,6 +79,17 @@
         <p class="oe_no_content_create">Click to create a new Category</p>
       </field>
     </record>
+    <record id="analytics_rate_view_action" model="ir.actions.act_window">
+      <field name="name">Genco Parameters Analytics</field>
+      <field name="res_model">ebs_ocma.genco.invoice.billing_cycle.parameter</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+
 
   </data>
 </odoo>

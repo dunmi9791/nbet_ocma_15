@@ -36,6 +36,7 @@
         'data/ocma_account_journals.xml',
         'security/ir.model.access.csv',
         'views/dashboard.xml',
+        'views/genco_analytics.xml',
         'views/billing_cycle_views.xml',
         'views/res_partner_views.xml',
         'views/genco_invoice_views.xml',

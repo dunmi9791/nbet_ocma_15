@@ -640,10 +640,25 @@ class GencoBCParaemeter(models.Model):
     capacity_payment = fields.Float('Capacity Payment', compute='_compute_capacity_payment')
     energy_payment = fields.Float('Energy Payment', compute='_compute_energy_payment')
     total_payment = fields.Float('Total Payment', compute='_compute_total_payment')
+    myto_capacity_tariff = fields.Float(
+        string='PPA capacity tariff',
+        required=False)
+    myto_energy_tariff = fields.Float(
+        string='PPA Energy tariff',
+        required=False)
 
     billing_cycle_id = fields.Many2one(comodel_name='billing.cycle', string="Billing Cycle")
 
     verified = fields.Boolean(string='verified invoice')
+
+
+    def _compute_capacity_tariff(self):
+        pass
+
+
+    def _compute_energy_tariff(self):
+        pass
+
     
     @api.onchange('partner_id')
     def _onchange_partner_id(self):

@@ -7,3 +7,4 @@ from . import disco_invoice
 from . import myto_rate
 from . import disco_invoicing
 from . import disco_mro
+from . import rates

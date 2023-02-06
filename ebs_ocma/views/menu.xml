@@ -23,6 +23,18 @@
             sequence="5"
             parent="ocma_root_menu"/>
         <menuitem
+            id="analytics_rate_menu"
+            name="Analytics"
+            sequence="6"
+            parent="ocma_root_menu"/>
+                <menuitem
+            id="analytics_rate_action_menu"
+            name="Genco Parameters"
+            action="analytics_rate_view_action"
+            parent="analytics_rate_menu"
+            sequence="1"/>
+
+        <menuitem
             id="myto_rate_action_menu"
             name="Myto Rates"
             action="myto_rate_view_action"
@@ -33,7 +45,14 @@
             name="Rates Category"
             action="myto_rate_category_view_action"
             parent="myto_rate_menu"
+            sequence="3"/>
+        <menuitem
+            id="hydro_rate_action_menu"
+            name="Hydro Rates"
+            action="hydro_rate_view_action"
+            parent="myto_rate_menu"
             sequence="2"/>
+
 
     </data>
 </odoo>

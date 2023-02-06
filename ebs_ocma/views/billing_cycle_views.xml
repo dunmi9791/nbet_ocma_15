@@ -99,6 +99,8 @@
                                         <field name="invoiced_energy" sum="Total Invoiced Energy" width="0.5" optional="show"/>
                                         <field name="capacity" sum="Total Capacity" width="0.5" optional="show"/>
                                         <field name="energy_sent_out_mwh" sum="Total Energy Sent Out(Mwh)" width="0.5" optional="show"/>
+                                        <field name="myto_capacity_tariff" width="0.5" optional="show"/>
+                                        <field name="myto_energy_tariff" width="0.5" optional="show"/>
                                         <field name="capacity_payment" sum="Total Capacity Payment" width="0.5" optional="show"/>
                                         <field name="energy_payment" sum="Total Energy Payment" width="0.5" optional="show"/>
                                         <field name="total_payment" sum="Total Payment" width="0.5" optional="show"/>
