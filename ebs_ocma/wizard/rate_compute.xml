@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="ebs_ocma_rate_computation_wizard_form">
+            <field name="name">ebs_ocma.rate.computation.wizard.form</field>
+            <field name="model">ebs_ocma.rate.computation</field>
+            <field name="arch" type="xml">
+                <form string="Rate Computation">
+                     <header>
+                        <button name="fix_om_cur" type="object" string="Compute" class="oe_highlight"  />
+                     </header>
+                    <group col="4">
+                        <group string="Base Myto Rates">
+                            <field name="myto_rate_id" readonly="1"/>
+                            <field name="calculation_type"/>
+                            <field name="old_tlf"/>
+                            <field name="usd_fx_cbn"/>
+                            <field name="us_cpi"/>
+                            <field name="fixed_o_m"/>
+                            <field name="variable_o_m"/>
+                            <field name="capital_recovery"/>
+                            <field name="energy_charge"/>
+                            <field name="capacity_charge"/>
+                            <field name="wholesale_charge"/>
+                        </group>
+                        <group string="Period Myto Rates">
+                            <field name="billing_circle"/>
+                            <field name="new_tlf"/>
+                            <field name="usd_fx_cbn_cur"/>
+                            <field name="us_cpi_cur"/>
+                            <field name="fixed_o_m_cur"/>
+                            <field name="variable_o_m_cur"/>
+                            <field name="capital_recovery_cur"/>
+                            <field name="energy_charge_cur"/>
+                            <field name="energy_charge_tlf"/>
+                            <field name="capacity_charge_cur"/>
+                            <field name="wholesale_charge_cur"/>
+
+                        </group>
+
+                    </group>
+
+                    <footer>
+<!--                        <button string="Apply" confirm="Are you sure? Do not forget to cross check" name="apply_mro" type="object" class="btn-primary"/>-->
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="compute_rate_wizard" model="ir.actions.act_window">
+            <field name="name">Rate Computation</field>
+            <field name="res_model">ebs_ocma.rate.computation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="binding_view_types">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

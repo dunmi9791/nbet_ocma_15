@@ -32,6 +32,7 @@
     'data': [
         'wizard/genco_invoice_verification.xml',
         'wizard/disco_mro_application_views.xml',
+        'wizard/rate_compute.xml',
         'data/sequence.xml',
         'data/ocma_account_journals.xml',
         'security/ir.model.access.csv',

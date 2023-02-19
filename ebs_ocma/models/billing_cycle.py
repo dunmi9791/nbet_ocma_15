@@ -642,21 +642,29 @@ class GencoBCParaemeter(models.Model):
     total_payment = fields.Float('Total Payment', compute='_compute_total_payment')
     myto_capacity_tariff = fields.Float(
         string='PPA capacity tariff',
-        required=False)
+        required=False, compute='_compute_capacity_tariff')
     myto_energy_tariff = fields.Float(
         string='PPA Energy tariff',
-        required=False)
+        required=False, compute='_compute_energy_tariff')
 
     billing_cycle_id = fields.Many2one(comodel_name='billing.cycle', string="Billing Cycle")
 
     verified = fields.Boolean(string='verified invoice')
 
-
     def _compute_capacity_tariff(self):
-        pass
-
+        for rec in self:
+            billingcycle = rec.billing_cycle_id.id
+            mytorate = rec.partner_id.myto_rate.id
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)])
+            rec.myto_capacity_tariff = rates.capacity_charge
 
     def _compute_energy_tariff(self):
+        for rec in self:
+            billingcycle = rec.billing_cycle_id.id
+            mytorate = rec.partner_id.myto_rate.id
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)])
+            rec.myto_energy_tariff = rates.energy_charge
+
         pass
 
     
@@ -691,11 +699,11 @@ class GencoBCParaemeter(models.Model):
 
     def _compute_capacity_payment(self):
         for rec in self:
-            rec.capacity_payment = rec.capacity * rec.billing_cycle_id.hours_in_month * rec.partner_id.rate
+            rec.capacity_payment = rec.capacity * rec.billing_cycle_id.hours_in_month * rec.myto_capacity_tariff
     
     def _compute_energy_payment(self):
         for rec in self:
-            rec.energy_payment = rec.energy_sent_out_mwh * rec.partner_id.rate_gas_price
+            rec.energy_payment = rec.energy_sent_out_mwh * rec.myto_energy_tariff
             # rec.energy_payment = rec.invoiced_energy * rec.partner_id.rate_gas_price
 
     def _compute_total_payment(self):

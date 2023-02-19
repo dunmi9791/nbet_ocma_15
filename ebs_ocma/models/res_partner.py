@@ -13,7 +13,10 @@ class Partner(models.Model):
     contract_capacity_share = fields.Float('Contract Capacity Share')
     is_genco = fields.Boolean(string='Genco')
     is_disco = fields.Boolean(string='Disco')
-
+    myto_rate = fields.Many2one(
+        comodel_name='ocma.myto.rate',
+        string='Myto rate',
+        required=False)
     rate_category = fields.Many2one(comodel_name='ebs_ocma.myto.rate.cateogry', string='Rate Category')
 
     rate = fields.Float(string='Rate (Capacity Tariff)', store=True)

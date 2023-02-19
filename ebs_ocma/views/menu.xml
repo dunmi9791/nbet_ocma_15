@@ -48,7 +48,7 @@
             sequence="3"/>
         <menuitem
             id="hydro_rate_action_menu"
-            name="Hydro Rates"
+            name="Mytos Rates"
             action="hydro_rate_view_action"
             parent="myto_rate_menu"
             sequence="2"/>
