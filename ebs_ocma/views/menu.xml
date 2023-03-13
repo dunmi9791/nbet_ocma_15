@@ -52,6 +52,17 @@
             action="hydro_rate_view_action"
             parent="myto_rate_menu"
             sequence="2"/>
+         <menuitem
+            id="indices_inputs_action_menu"
+            name="Indices and Inputs"
+            parent="myto_rate_menu"
+            sequence="5"/>
+        <menuitem
+            id="uscpi_inputs_action_menu"
+            name="US CPI"
+            action="us_cpi_view_action"
+            parent="indices_inputs_action_menu"
+            sequence="1"/>
 
 
     </data>

@@ -137,17 +137,20 @@
                             <group string="Base MYTO Rate">
                                 <field name="usd_fx_cbn"/>
                                 <field name="us_cpi" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli')]}"/>
-                                <field name="ncpi" attrs="{'invisible': [('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo')]}"/>
+                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'olorunsogo')]}"/>
+                                <field name="ncpi" attrs="{'invisible': [('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
+                                ('calculation_type', '!=', 'olorunsogo')]}"/>
                                 <field name="gas_fuel_price" attrs="{'invisible': [('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo')]}"/>
+                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
+                                ('calculation_type', '!=', 'olorunsogo')]}"/>
                                 <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', '=', 'agip')]}"/>
                                 <field name="variable_o_m" attrs="{'invisible': [('calculation_type', '=', 'agip=')]}"/>
                                 <field name="vfcr" attrs="{'invisible': [('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo')]}"/>
+                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
+                                ('calculation_type', '!=', 'olorunsogo')]}"/>
                                 <field name="capital_recovery" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),
                                 ('calculation_type', '!=', 'successor_gencos'), ('calculation_type', '!=', 'transcorp_ugheli'),
-                                ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo')]}"/>
+                                ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'), ('calculation_type', '!=', 'olorunsogo')]}"/>
                                 <field name="energy_charge" />
                                 <field name="capacity_charge" />
                                 <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),

@@ -31,3 +31,4 @@ access_ebs_ocma_disco_mro_line,access_ebs_ocma_disco_mro_line,model_ebs_ocma_dis
 access_ebs_ocma_rates,access_ebs_ocma_rates,model_hydro_rates,base.group_user,1,1,1,1
 access_ebs_ocma_rates_myto,access_ebs_ocma_rates_myto,model_ocma_myto_rate,base.group_user,1,1,1,1
 access_ebs_ocma_rates_compute,access_ebs_ocma_rates_compute,model_ebs_ocma_rate_computation,base.group_user,1,1,1,1
+access_ebs_ocma_us_cpi,access_ebs_ocma_us_cpi,model_uscpi_indices,base.group_user,1,1,1,1
