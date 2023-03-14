@@ -36,18 +36,16 @@ class RateCoputation(models.TransientModel):
     usd_fx_cbn_cur = fields.Float(
         string='Usd/naira fx CBN',
         required=False, )
-    us_cpi = fields.Float(
-        string='US Cpi (index)',
-        required=False,)
+    us_cpi = fields.Float(string='US Cpi (index)', required=False,)
+    us_ppi = fields.Float(string='US ppi (index)', required=False, )
     old_tlf = fields.Float(
         string='Old TLF',
         required=False, )
     new_tlf = fields.Float(
         string='New TLF',
         required=False, )
-    us_cpi_cur = fields.Float(
-        string='US Cpi (index)',
-        required=False,)
+    us_cpi_cur = fields.Float(string='US Cpi (index)', required=False,)
+    us_ppi_cur = fields.Float(string='US ppi (index)', required=False, )
     fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, )
     fixed_o_m_noncompute = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, )
     fixed_o_m_cur = fields.Float(
@@ -59,9 +57,11 @@ class RateCoputation(models.TransientModel):
     fixed_o_m_dollar = fields.Float(string='Fixed O & M($/mw/hr)', required=False, )
     fixed_o_m_dollar_cur = fields.Float(string='Fixed O & M($/mw/hr)', required=False, compute='_fixed_om_dollar')
     variable_o_m_dollar = fields.Float(string='Variable O & M($/mw/hr)', required=False, )
-    variable_o_m_dollar_cur = fields.Float(string='Variable O & M($/mw/hr)', required=False, )
+    variable_o_m_dollar_cur = fields.Float(string='Variable O & M($/mw/hr)', required=False,
+                                           compute='_variable_om_dollar')
     capital_recovery_dollar = fields.Float(string='Capital recovery($/mw/hr)', required=False, )
-    capital_recovery_dollar_current = fields.Float(string='Capital recovery($/mw/hr)', required=False, )
+    capital_recovery_dollar_cur = fields.Float(string='Capital recovery($/mw/hr)', required=False,
+                                               compute='_capital_recovery_dollar_cur' )
     capital_recovery = fields.Float(string='Capital recovery(n/mw/hr)', required=False, )
     capital_recovery_cur = fields.Float(string='Capital recovery(n/mw/hr)', required=False,
                                         compute='_capital_recovery_cur')
@@ -76,19 +76,21 @@ class RateCoputation(models.TransientModel):
         comodel_name='billing.cycle',
         string='Billing cycle',
         required=False,)
-    gas_fuel_price = fields.Float(
-        string='Gas Fuel Price($/mmbtu)',
-        required=False, )
+    gas_fuel_price_dollar = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
+    gas_fuel_price_dollar_cur = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
+    gas_fuel_price_naira = fields.Float(string='Gas Fuel Price(N/mmbtu)', required=False, )
     vfcr = fields.Float(string='VFCR(n/mwh)', required=False)
-    vfcr_cur = fields.Float(string='VFCR(n/mwh)', required=False)
+    vfcr_cur = fields.Float(string='VFCR(n/mwh)', required=False, compute='_vfcr_cur')
+    vfcr_dollar = fields.Float(string='VFCR(n/mwh)', required=False)
+    vfcr_dollar_cur = fields.Float(string='VFCR(n/mwh)', required=False, compute='_vfcr_cur_dollar')
     ncpi = fields.Float(string='NCPI(index)', required=False)
     ncpi_cur = fields.Float(string='NCPI(index)', required=False)
     us_ppi = fields.Float(
         string='US PPI(Index)',
         required=False, )
-    investment_dollar = fields.Float(
-        string='Investment($/kw/month)',
-        required=False, )
+    investment_dollar = fields.Float(string='Investment($/kw/month)', required=False, )
+    investment_dollar_cur = fields.Float(string='Investment($/kw/month)', required=False,
+                                         compute='_investment_dollar_cur')
     general_expenses_dollar = fields.Float(
         string='General Expenses($/kw/month)',
         required=False, )
@@ -106,6 +108,9 @@ class RateCoputation(models.TransientModel):
     tax_cost = fields.Float(string='Tax cost(n/mw/hr)', required=False)
     capital_cost = fields.Float(string='Capital cost(n/mw/hr)', required=False)
     capital_cost_cur = fields.Float(string='Capital cost(n/mw/hr)', required=False)
+    startup_dollar = fields.Float(string='Startup dollar', required=False)
+    startup_dollar_cur = fields.Float(string='Startup dollar', required=False, compute='_startup_dollar_cur')
+    startup_naira = fields.Float(string='Startup Naira', required=False, compute='_startup_naira')
 
     def fix_om_cur(self):
         for record in self:
@@ -123,6 +128,63 @@ class RateCoputation(models.TransientModel):
                 'wholesale_charge': record.wholesale_charge_cur,
                 'billing_circle': record.billing_circle.id,
                 })
+
+    def _vfcr_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli' , 'fipl', 'fiplo', 'olorunsogo', 'omotosho']:
+                    record.vfcr_cur = record.vfcr * (record.gas_fuel_price_dollar_cur / record.gas_fuel_price_dollar) * \
+                                      (record.usd_fx_cbn_cur / record.usd_fx_cbn)
+                elif record.calculation_type in ['shell']:
+                    record.vfcr_cur = record.vfcr_dollar_cur * record.usd_fx_cbn_cur
+                else:
+                    pass
+
+    def _vfcr_cur_dollar(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell']:
+                    record.vfcr_dollar_cur = record.vfcr_dollar * record.us_ppi_cur / record.us_ppi
+
+    def _investment_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip']:
+                    record.investment_dollar_cur = record.investment_dollar * record.us_ppi_cur / record.us_ppi
+
+    def _fixed_om_dollar(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell']:
+                    record.fixed_o_m_dollar_cur = (record.fixed_o_m_dollar * 0.67) + (0.33 * record.fixed_o_m_dollar) * (record.us_ppi_cur/record.us_ppi)
+                elif record.calculation_type in ['agip']:
+                    record.fixed_o_m_dollar_cur = record.fixed_o_m_dollar * record.us_ppi_cur / record.us_ppi
+                else:
+                    pass
+
+    def _variable_om_dollar(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell', 'agip']:
+                    record.variable_o_m_dollar_cur = record.variable_o_m_dollar * record.us_ppi_cur/record.us_ppi
+                else:
+                    pass
+
+    def _startup_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell', ]:
+                    record.startup_dollar_cur = record.startup_dollar * record.us_ppi_cur/record.us_ppi
+                else:
+                    pass
+
+    def _startup_naira(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell', ]:
+                    record.startup_naira = record.startup_dollar_cur * record.usd_fx_cbn_cur
+                else:
+                    pass
 
     @api.depends('fixed_o_m', 'usd_fx_cbn_cur', 'us_cpi_cur', 'usd_fx_cbn', 'us_cpi')
     def _fix_om_cur(self):
@@ -170,6 +232,19 @@ class RateCoputation(models.TransientModel):
                 elif record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp']:
                     record.variable_o_m_cur = record.variable_o_m_noncompute
 
+                else:
+                    pass
+
+    def _capital_recovery_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['shell', ]:
+                    record.capital_recovery_dollar_cur = (record.capital_recovery_dollar * 0.67) + \
+                                                         (record.capital_recovery_dollar * 0.33) * (record.us_ppi_cur / record.us_ppi)
+                elif record.calculation_type in ['shell']:
+                    record.capital_recovery_cur = record.capital_recovery_dollar_cur * record.usd_fx_cbn_cur
+                elif record.calculation_type in ['mabon']:
+                    record.capital_recovery_cur = record.capital_recovery * (0.25 + 0.75 * (record.usd_fx_cbn_cur/record.usd_fx_cbn))
                 else:
                     pass
 
