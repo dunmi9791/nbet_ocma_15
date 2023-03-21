@@ -127,11 +127,7 @@ class MytoRates(models.Model):
             if record.calculation_type:
                 if record.calculation_type == 'hydros':
                     record.capacity_charge = record.capital_recovery + record.fixed_o_m
-                if record.calculation_type == 'successor_gencos':
-                    record.capacity_charge = record.capital_recovery + record.fixed_o_m
-                if record.calculation_type == 'fipl':
-                    record.capacity_charge = record.capital_recovery + record.fixed_o_m
-                if record.calculation_type == 'fiplo':
+                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo']:
                     record.capacity_charge = record.capital_recovery + record.fixed_o_m
                 else:
                     pass
@@ -141,11 +137,7 @@ class MytoRates(models.Model):
             if record.calculation_type:
                 if record.calculation_type == 'hydros':
                     record.energy_charge = record.variable_o_m
-                if record.calculation_type == 'successor_gencos':
-                    record.energy_charge = record.vfcr + record.variable_o_m
-                if record.calculation_type == 'fipl':
-                    record.energy_charge = record.vfcr + record.variable_o_m
-                if record.calculation_type == 'fiplo':
+                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo']:
                     record.energy_charge = record.vfcr + record.variable_o_m
                 else:
                     pass
@@ -155,12 +147,9 @@ class MytoRates(models.Model):
             if record.calculation_type:
                 if record.calculation_type == 'hydros':
                     record.wholesale_charge = record.capacity_charge + record.energy_charge
-                if record.calculation_type == 'successor_gencos':
+                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo']:
                     record.wholesale_charge = record.capacity_charge + record.energy_charge
-                if record.calculation_type == 'fipl':
-                    record.wholesale_charge = record.capacity_charge + record.energy_charge
-                if record.calculation_type == 'fiplo':
-                    record.wholesale_charge = record.capacity_charge + record.energy_charge
+
                 else:
                     pass
 

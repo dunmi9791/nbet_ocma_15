@@ -111,6 +111,7 @@ class RateCoputation(models.TransientModel):
     startup_dollar_cur = fields.Float(string='Startup dollar', required=False, compute='_startup_dollar_cur')
     startup_naira = fields.Float(string='Startup Naira', required=False, compute='_startup_naira')
     fuel_cost_dollar = fields.Float(string='Fuel cost dollar', required=False, compute='_fuel_cost_cur')
+    fuel_cost_naira = fields.Float(string='Fuel cost Naira', required=False, compute='_fuel_cost_cur_naira')
     hhv_to_lhv = fields.Float(string='HHV to LHV Ratio', required=False)
     efficiency = fields.Float(string='Efficiency %', required=False)
 
@@ -209,15 +210,23 @@ class RateCoputation(models.TransientModel):
     def _fuel_cost_cur(self):
         for record in self:
             if record.calculation_type:
-                if record.calculation_type in ['ibom']:
+                if record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp']:
                     record.fuel_cost_dollar = record.gas_fuel_price_dollar_cur * record.hhv_to_lhv * 3.412 / record.efficiency
+                else:
+                    pass
+
+    def _fuel_cost_cur_naira(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp']:
+                    record.fuel_cost_naira = record.fuel_cost_dollar * record.usd_fx_cbn_cur
                 else:
                     pass
 
     def _gas_price_naira(self):
         for record in self:
             if record.calculation_type:
-                if record.calculation_type in ['ibom']:
+                if record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp']:
                     record.gas_fuel_price_naira = record.gas_fuel_price_dollar_cur * record.usd_fx_cbn_cur
                 else:
                     pass
@@ -308,7 +317,7 @@ class RateCoputation(models.TransientModel):
                 elif record.calculation_type in ['agip']:
                     record.energy_charge_cur = record.fuel_naira_cur + record.variable_o_m_cur
                 elif record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp' ]:
-                    record.energy_charge_cur = record.fuel_naira_cur + record.variable_o_m_cur + \
+                    record.energy_charge_cur = record.fuel_cost_naira + record.variable_o_m_cur + \
                                                record.trans_loss_cost_cur + (1/3 * record.tax_cost_cur)
                 elif record.calculation_type in ['mabon']:
                     record.energy_charge_cur = record.energy_charge
