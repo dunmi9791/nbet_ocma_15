@@ -78,7 +78,7 @@ class RateCoputation(models.TransientModel):
         required=False,)
     gas_fuel_price_dollar = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
     gas_fuel_price_dollar_cur = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
-    gas_fuel_price_naira = fields.Float(string='Gas Fuel Price(N/mmbtu)', required=False, )
+    gas_fuel_price_naira = fields.Float(string='Gas Fuel Price(N/mmbtu)', required=False, compute='_gas_price_naira')
     vfcr = fields.Float(string='VFCR(n/mwh)', required=False)
     vfcr_cur = fields.Float(string='VFCR(n/mwh)', required=False, compute='_vfcr_cur')
     vfcr_dollar = fields.Float(string='VFCR(n/mwh)', required=False)
@@ -91,14 +91,13 @@ class RateCoputation(models.TransientModel):
     investment_dollar = fields.Float(string='Investment($/kw/month)', required=False, )
     investment_dollar_cur = fields.Float(string='Investment($/kw/month)', required=False,
                                          compute='_investment_dollar_cur')
-    general_expenses_dollar = fields.Float(
-        string='General Expenses($/kw/month)',
-        required=False, )
-    insurance_dollar = fields.Float(
-        string='Insurance($/kw/month)',
-        required=False)
+    general_expenses_dollar = fields.Float(string='General Expenses($/kw/month)', required=False, )
+    general_expenses_dollar_cur = fields.Float(string='General Expenses($/kw/month)', required=False,
+                                               compute='_expenses_dollar_cur')
+    insurance_dollar = fields.Float(string='Insurance($/kw/month)', required=False,)
+    insurance_dollar_cur = fields.Float(string='Insurance($/kw/month)', required=False, compute='_insurance_dollar_cur')
     fuel_dollar = fields.Float(string='Wholesale charge($/mw/hr)', required=False)
-    fuel_dollar_cur = fields.Float(string='Wholesale charge($/mw/hr)', required=False)
+    fuel_dollar_cur = fields.Float(string='Wholesale charge($/mw/hr)', required=False, compute='_fuel_dollar_cur')
     investment_naira = fields.Float(string='Investment(n/kw/month)', required=False)
     general_expenses_naira = fields.Float(string='General Expenses(n/kw/month)', required=False)
     insurance_naira = fields.Float(string='Insurance(n/kw/month)', required=False)
@@ -111,6 +110,9 @@ class RateCoputation(models.TransientModel):
     startup_dollar = fields.Float(string='Startup dollar', required=False)
     startup_dollar_cur = fields.Float(string='Startup dollar', required=False, compute='_startup_dollar_cur')
     startup_naira = fields.Float(string='Startup Naira', required=False, compute='_startup_naira')
+    fuel_cost_dollar = fields.Float(string='Fuel cost dollar', required=False, compute='_fuel_cost_cur')
+    hhv_to_lhv = fields.Float(string='HHV to LHV Ratio', required=False)
+    efficiency = fields.Float(string='Efficiency %', required=False)
 
     def fix_om_cur(self):
         for record in self:
@@ -152,6 +154,24 @@ class RateCoputation(models.TransientModel):
                 if record.calculation_type in ['agip']:
                     record.investment_dollar_cur = record.investment_dollar * record.us_ppi_cur / record.us_ppi
 
+    def _insurance_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip']:
+                    record.insurance_dollar_cur = record.insurance_dollar * record.us_ppi_cur / record.us_ppi
+
+    def _expenses_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip']:
+                    record.general_expenses_dollar_cur = record.general_expenses_dollar
+
+    def _fuel_dollar_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip']:
+                    record.fuel_dollar_cur = record.fuel_dollar * record.us_ppi_cur / record.us_ppi
+
     def _fixed_om_dollar(self):
         for record in self:
             if record.calculation_type:
@@ -183,6 +203,22 @@ class RateCoputation(models.TransientModel):
             if record.calculation_type:
                 if record.calculation_type in ['shell', ]:
                     record.startup_naira = record.startup_dollar_cur * record.usd_fx_cbn_cur
+                else:
+                    pass
+
+    def _fuel_cost_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['ibom']:
+                    record.fuel_cost_dollar = record.gas_fuel_price_dollar_cur * record.hhv_to_lhv * 3.412 / record.efficiency
+                else:
+                    pass
+
+    def _gas_price_naira(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['ibom']:
+                    record.gas_fuel_price_naira = record.gas_fuel_price_dollar_cur * record.usd_fx_cbn_cur
                 else:
                     pass
 
