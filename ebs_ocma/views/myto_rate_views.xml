@@ -122,9 +122,12 @@
                         <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="open" />
                         <button name="action_reject" type="object" string="Reject" class="btn-danger" states="open" />
                         <button name="%(ebs_ocma.compute_rate_wizard)d" context="{'default_myto_rate_id': active_id, 'default_usd_fx_cbn': usd_fx_cbn,
-                         'default_us_cpi': us_cpi, 'default_fixed_o_m': fixed_o_m, 'default_variable_o_m': variable_o_m, 'default_capital_recovery': capital_recovery,
-                         'default_energy_charge': energy_charge, 'default_capacity_charge': capacity_charge,
-                         'default_wholesale_charge': wholesale_charge, 'default_calculation_type': calculation_type,}" type="action" string="Compute rate" class="oe_highlight" />
+                         'default_us_cpi': us_cpi, 'default_us_ppi': us_ppi, 'default_fixed_o_m': fixed_o_m, 'default_variable_o_m': variable_o_m, 'default_capital_recovery': capital_recovery,
+                         'default_energy_charge': energy_charge, 'default_capacity_charge': capacity_charge,'default_vfcr': vfcr, 'default_vfcr_dollar': vfcr_dollar,
+                         'default_wholesale_charge': wholesale_charge, 'default_calculation_type': calculation_type, 'default_fixed_o_m_dollar': fixed_o_m_dollar,
+                         'default_variable_o_m_dollar': variable_o_m_dollar, 'default_capital_recovery_dollar': capital_recovery_dollar,
+                         'default_startup_dollar': startup_dollar, 'default_ncpi': ncpi,
+                         'default_gas_fuel_price_dollar': gas_fuel_price,}" type="action" string="Compute rate" class="oe_highlight" />
 
                         <field name="state" widget="statusbar" />
                     </header>
@@ -135,27 +138,43 @@
                                 <field name="calculation_type"/>
                             </group>
                             <group string="Base MYTO Rate">
-                                <field name="usd_fx_cbn"/>
-                                <field name="us_cpi" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'olorunsogo')]}"/>
-                                <field name="ncpi" attrs="{'invisible': [('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
-                                ('calculation_type', '!=', 'olorunsogo')]}"/>
-                                <field name="gas_fuel_price" attrs="{'invisible': [('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
-                                ('calculation_type', '!=', 'olorunsogo')]}"/>
-                                <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', '=', 'agip')]}"/>
-                                <field name="variable_o_m" attrs="{'invisible': [('calculation_type', '=', 'agip=')]}"/>
-                                <field name="vfcr" attrs="{'invisible': [('calculation_type', '!=', 'successor_gencos'),
-                                ('calculation_type', '!=', 'transcorp_ugheli'), ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'),
-                                ('calculation_type', '!=', 'olorunsogo')]}"/>
-                                <field name="capital_recovery" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),
-                                ('calculation_type', '!=', 'successor_gencos'), ('calculation_type', '!=', 'transcorp_ugheli'),
-                                ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo'), ('calculation_type', '!=', 'olorunsogo')]}"/>
-                                <field name="energy_charge" />
-                                <field name="capacity_charge" />
-                                <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', '!=', 'hydros'),
-                                ('calculation_type', '!=', 'successor_gencos'), ('calculation_type', '!=', 'transcorp_ugheli'),
-                                ('calculation_type', '!=', 'fipl'), ('calculation_type', '!=', 'fiplo')]}"/>
+                                <field name="usd_fx_cbn" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}" />
+                                <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'not in', ['hydros', 'successor_gencos', 'transcorp_ugheli', 'olorunsogo', 'omotosho', 'mabon'])]}"/>
+                                <field name="ncpi" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo', 'olorunsogo', 'omotosho', 'mabon'])]}"/>
+                                <field name="gas_fuel_price" attrs="{'invisible': [('calculation_type', 'not in', ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
+                                <field name="gas_hhv_price_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
+                                <field name="gas_hhv_price" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
+                                <field name="hhv_to_lhv" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
+                                <field name="efficiency" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
+                                <field name="us_ppi" attrs="{'invisible': [('calculation_type', '!=', 'shell'), ('calculation_type', '!=', 'agip')]}"/>
+                                <field name="investment_dollar" attrs="{'invisible': [('calculation_type', '!=', 'agip')]}"/>
+                                <field name="vfcr_dollar" attrs="{'invisible': [('calculation_type', '!=', 'shell')]}"/>
+                                <field name="capital_recovery_dollar" attrs="{'invisible': [('calculation_type', '!=', 'shell')]}"/>
+                                <field name="startup_dollar" attrs="{'invisible': [('calculation_type', '!=', 'shell')]}"/>
+                                <field name="fixed_o_m_dollar" attrs="{'invisible': [('calculation_type', '!=', 'shell'), ('calculation_type', '!=', 'agip')]}"/>
+                                <field name="insurance_dollar" attrs="{'invisible': [('calculation_type', '!=', 'agip')]}"/>
+                                <field name="general_expenses_dollar" attrs="{'invisible': [('calculation_type', '!=', 'agip')]}"/>
+                                <field name="fuel_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}" options="{'field_digits' : True}"/>
+                                <field name="fuel_dollar_input" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}" options="{'field_digits' : True}"/>
+                                <field name="fuel_naira" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}" options="{'field_digits' : True}"/>
+                                <field name="capital_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}" options="{'field_digits' : True}"/>
+                                <field name="tax_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}" options="{'field_digits' : True}"/>
+                                <field name="transmission_loss_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}" options="{'field_digits' : True}"/>
+                                <field name="variable_o_m_dollar" attrs="{'invisible': [('calculation_type', '!=', 'shell'), ('calculation_type', '!=', 'agip')]}" options="{'field_digits' : True}"/>
+                                <field name="energy_charge_dollar" attrs="{'invisible': [('calculation_type', '!=', 'agip')]}" options="{'field_digits' : True}"/>
+                                <field name="capacity_charge_dollar" attrs="{'invisible': [('calculation_type', '!=', 'agip')]}"/>
+
+                                <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', 'in', ['agip', 'shell',])]}"/>
+                                <field name="variable_o_m" attrs="{'invisible': [('calculation_type', 'in', ['agip', 'shell'])]}"/>
+                                <field name="vfcr" attrs="{'invisible': [('calculation_type', 'not in', ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
+                                <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'not in', ['hydros', 'successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho', 'mabon'])]}"/>
+
+
+                                <field name="energy_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                                <field name="capacity_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                                <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', 'not in', ['hydros', 'successor_gencos',
+                                 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho', 'ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
+                                <field name="wholesale_charge_net" attrs="{'invisible': [('calculation_type', 'not in', ['mabon'])]}"/>
 
                             </group>
 

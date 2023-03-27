@@ -30,20 +30,13 @@ class RateCoputation(models.TransientModel):
         string='Myto_rate_id',
         required=False)
 
-    usd_fx_cbn = fields.Float(
-        string='Usd/naira fx CBN',
-        required=False,)
-    usd_fx_cbn_cur = fields.Float(
-        string='Usd/naira fx CBN',
-        required=False, )
+    usd_fx_cbn = fields.Float(string='Usd/naira fx CBN', required=False,)
+    usd_fx_cbn_cur = fields.Float(string='Usd/naira fx CBN', required=False, )
+    usd_fx_cbn_sell_cur = fields.Float(string='Usd/naira fx CBN Selling', required=False, )
     us_cpi = fields.Float(string='US Cpi (index)', required=False,)
     us_ppi = fields.Float(string='US ppi (index)', required=False, )
-    old_tlf = fields.Float(
-        string='Old TLF',
-        required=False, )
-    new_tlf = fields.Float(
-        string='New TLF',
-        required=False, )
+    old_tlf = fields.Float(string='Old TLF', required=False, default=8.05)
+    new_tlf = fields.Float(string='New TLF', required=False, default=7.5)
     us_cpi_cur = fields.Float(string='US Cpi (index)', required=False,)
     us_ppi_cur = fields.Float(string='US ppi (index)', required=False, )
     fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, )
@@ -132,12 +125,16 @@ class RateCoputation(models.TransientModel):
                 'billing_circle': record.billing_circle.id,
                 })
 
+    @api.depends('vfcr', 'usd_fx_cbn_cur', 'gas_fuel_price_dollar_cur')
     def _vfcr_cur(self):
         for record in self:
             if record.calculation_type:
-                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli' , 'fipl', 'fiplo', 'olorunsogo', 'omotosho']:
-                    record.vfcr_cur = record.vfcr * (record.gas_fuel_price_dollar_cur / record.gas_fuel_price_dollar) * \
-                                      (record.usd_fx_cbn_cur / record.usd_fx_cbn)
+                if record.calculation_type in ['successor_gencos', 'transcorp_ugheli',  'olorunsogo', 'omotosho']:
+                    record.vfcr_cur = record.vfcr * (record.usd_fx_cbn_cur / record.usd_fx_cbn) * \
+                                      (record.gas_fuel_price_dollar_cur / record.gas_fuel_price_dollar)
+                elif record.calculation_type in ['fipl', 'fiplo']:
+                    record.vfcr_cur = record.vfcr * (record.usd_fx_cbn_sell_cur / record.usd_fx_cbn) * \
+                                      (record.gas_fuel_price_dollar_cur / record.gas_fuel_price_dollar)
                 elif record.calculation_type in ['shell']:
                     record.vfcr_cur = record.vfcr_dollar_cur * record.usd_fx_cbn_cur
                 else:
@@ -173,16 +170,18 @@ class RateCoputation(models.TransientModel):
                 if record.calculation_type in ['agip']:
                     record.fuel_dollar_cur = record.fuel_dollar * record.us_ppi_cur / record.us_ppi
 
+    @api.depends('fixed_o_m_dollar', 'us_ppi_cur', 'us_ppi')
     def _fixed_om_dollar(self):
         for record in self:
             if record.calculation_type:
                 if record.calculation_type in ['shell']:
-                    record.fixed_o_m_dollar_cur = (record.fixed_o_m_dollar * 0.67) + (0.33 * record.fixed_o_m_dollar) * (record.us_ppi_cur/record.us_ppi)
+                    record.fixed_o_m_dollar_cur = round((0.33 * record.fixed_o_m_dollar) * (record.us_ppi_cur / record.us_ppi), 2)
                 elif record.calculation_type in ['agip']:
                     record.fixed_o_m_dollar_cur = record.fixed_o_m_dollar * record.us_ppi_cur / record.us_ppi
                 else:
                     pass
 
+    @api.depends('variable_o_m_dollar', 'us_ppi_cur', 'us_ppi')
     def _variable_om_dollar(self):
         for record in self:
             if record.calculation_type:
@@ -191,6 +190,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
+    @api.depends('startup_dollar', 'us_ppi_cur', 'us_ppi')
     def _startup_dollar_cur(self):
         for record in self:
             if record.calculation_type:
@@ -199,6 +199,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
+    @api.depends('startup_dollar_cur', 'usd_fx_cbn_cur')
     def _startup_naira(self):
         for record in self:
             if record.calculation_type:
@@ -207,6 +208,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
+    @api.depends('gas_fuel_price_dollar_cur', 'hhv_to_lhv', 'efficiency')
     def _fuel_cost_cur(self):
         for record in self:
             if record.calculation_type:
@@ -215,6 +217,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
+    @api.depends('fuel_cost_dollar', 'usd_fx_cbn_cur')
     def _fuel_cost_cur_naira(self):
         for record in self:
             if record.calculation_type:
@@ -223,6 +226,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
+    @api.depends('gas_fuel_price_dollar_cur', 'usd_fx_cbn_cur')
     def _gas_price_naira(self):
         for record in self:
             if record.calculation_type:
@@ -231,7 +235,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
-    @api.depends('fixed_o_m', 'usd_fx_cbn_cur', 'us_cpi_cur', 'usd_fx_cbn', 'us_cpi')
+    @api.depends('fixed_o_m', 'usd_fx_cbn_cur', 'us_cpi_cur', 'usd_fx_cbn', 'us_cpi', 'ncpi_cur', 'ncpi')
     def _fix_om_cur(self):
         for record in self:
             if record.calculation_type:
@@ -254,7 +258,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
-    @api.depends('variable_o_m', 'usd_fx_cbn_cur', 'us_cpi_cur', 'usd_fx_cbn', 'us_cpi')
+    @api.depends('variable_o_m', 'usd_fx_cbn_cur', 'us_cpi_cur', 'usd_fx_cbn', 'us_cpi', 'ncpi_cur', 'ncpi')
     def _variable_om_cur(self):
         for record in self:
             if record.calculation_type:
@@ -306,7 +310,7 @@ class RateCoputation(models.TransientModel):
                 else:
                     pass
 
-    @api.depends('variable_o_m_cur' )
+    @api.depends('variable_o_m_cur', 'vfcr_cur')
     def _energy_charge_cur(self):
         for record in self:
             if record.calculation_type:
@@ -328,10 +332,10 @@ class RateCoputation(models.TransientModel):
     def _energy_charge_tlf(self):
         for record in self:
             if record.calculation_type:
-                if record.calculation_type == 'hydros':
+                if record.calculation_type in ['hydros', 'successor_gencos', 'transcorp_ugheli', 'olorunsogo', 'omotosho', 'fipl', 'fiplo']:
                     record.energy_charge_tlf = record.energy_charge_cur - record.wholesale_charge_cur * (1-((100-record.old_tlf) / (100-record.new_tlf)))
-                elif record.calculation_type in ['successor_gencos', 'fipl', 'fiplo']:
-                    record.capacity_charge = record.capital_recovery_cur + record.fixed_o_m_cur
+                elif record.calculation_type in ['shell', ]:
+                    record.energy_charge_tlf = record.energy_charge_cur / (100 - record.new_tlf/100)
                 else:
                     pass
 

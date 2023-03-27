@@ -8,29 +8,53 @@
                 <form string="Rate Computation">
                      <header>
                         <button name="fix_om_cur" type="object" string="Compute" class="oe_highlight"  />
+<!--                         <button name="vfcr_cur" type="object" string="Compute vfcr" class="oe_highlight"  />-->
                      </header>
                     <group col="4">
                         <group string="Base Myto Rates">
                             <field name="myto_rate_id" readonly="1"/>
                             <field name="calculation_type"/>
                             <field name="old_tlf"/>
-                            <field name="usd_fx_cbn"/>
-                            <field name="us_cpi"/>
-                            <field name="fixed_o_m"/>
-                            <field name="variable_o_m"/>
-                            <field name="capital_recovery"/>
-                            <field name="energy_charge"/>
-                            <field name="capacity_charge"/>
-                            <field name="wholesale_charge"/>
+                            <field name="usd_fx_cbn" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell'])]}"/>
+                            <field name="ncpi" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
+                            <field name="us_ppi" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="gas_fuel_price_dollar" attrs="{'invisible': [('calculation_type', 'not in',
+                             ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo'])]}"/>
+                            <field name="vfcr" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="vfcr_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="fixed_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="variable_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="variable_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="capital_recovery_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="startup_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="energy_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="capacity_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
                         </group>
                         <group string="Period Myto Rates">
                             <field name="billing_circle"/>
                             <field name="new_tlf"/>
                             <field name="usd_fx_cbn_cur"/>
-                            <field name="us_cpi_cur"/>
+                            <field name="usd_fx_cbn_sell_cur" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
+                            <field name="us_cpi_cur" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell'])]}"/>
+                            <field name="us_ppi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="fixed_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="variable_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="vfcr_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="capital_recovery_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="startup_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="ncpi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
+                            <field name="gas_fuel_price_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in',
+                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo'])]}"/>
+                            <field name="vfcr_cur" attrs="{'invisible': [('calculation_type', 'not in',
+                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'shell'])]}"/>
                             <field name="fixed_o_m_cur"/>
                             <field name="variable_o_m_cur"/>
                             <field name="capital_recovery_cur"/>
+                            <field name="startup_naira" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="energy_charge_cur"/>
                             <field name="energy_charge_tlf"/>
                             <field name="capacity_charge_cur"/>
