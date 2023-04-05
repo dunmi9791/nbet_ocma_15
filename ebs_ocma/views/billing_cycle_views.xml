@@ -9,6 +9,7 @@
                     <header>
                         <button name="action_submit" type="object" string="Submit" class="oe_highlight" states="draft" />
                         <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="open" />
+                        <button name="%(input_line_import_wizard_action)d" type="action" string="Import Input Lines" class="btn-primary" context="{'default_billing_cycle_id': active_id,}" attrs="{'invisible':[('state','in',['validate','cancel','done'])]}"/>
                         <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Enter Disco Params" type="action" states="draft" />
                         <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Enter Genco Params" type="action" states="draft" />
                         <button name="%(action_ebs_ocma_genco_invoice_transfer_wizard)d" class="oe_highlight" string="Enter Params" type="action" states="draft" />

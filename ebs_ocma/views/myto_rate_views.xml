@@ -126,7 +126,9 @@
                          'default_energy_charge': energy_charge, 'default_capacity_charge': capacity_charge,'default_vfcr': vfcr, 'default_vfcr_dollar': vfcr_dollar,
                          'default_wholesale_charge': wholesale_charge, 'default_calculation_type': calculation_type, 'default_fixed_o_m_dollar': fixed_o_m_dollar,
                          'default_variable_o_m_dollar': variable_o_m_dollar, 'default_capital_recovery_dollar': capital_recovery_dollar,
-                         'default_startup_dollar': startup_dollar, 'default_ncpi': ncpi,
+                         'default_startup_dollar': startup_dollar, 'default_ncpi': ncpi, 'default_investment_dollar': investment_dollar, 'default_insurance_dollar': insurance_dollar,
+                         'default_general_expenses_dollar': general_expenses_dollar, 'default_fuel_dollar': fuel_dollar_input, 'default_energy_charge_dollar': energy_charge_dollar,
+                         'default_capacity_charge_dollar': capacity_charge_dollar,
                          'default_gas_fuel_price_dollar': gas_fuel_price,}" type="action" string="Compute rate" class="oe_highlight" />
 
                         <field name="state" widget="statusbar" />

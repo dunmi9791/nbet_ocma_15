@@ -33,6 +33,7 @@
         'wizard/genco_invoice_verification.xml',
         'wizard/disco_mro_application_views.xml',
         'wizard/rate_compute.xml',
+        'wizard/input_import.xml',
         'data/sequence.xml',
         'data/precision.xml',
         'data/ocma_account_journals.xml',

@@ -596,7 +596,7 @@ class GencoVerifyDollars(models.Model):
         string='Customer Invoice Reference',
         required=False)
     billing_cycle_id = fields.Many2one(
-        comodel_name='billing.circle',
+        comodel_name='billing.cycle',
         string='Billing Cycle',
         required=False)
 
@@ -635,7 +635,7 @@ class GencoBCParaemeter(models.Model):
     invoiced_capacity = fields.Float(string='Invoiced Capacity', compute='_compute_invoice_capacity')
     invoiced_energy = fields.Float(string='Invoiced Energy', compute='_compute_invoiced_energy')
 
-    capacity = fields.Float('capacity', compute='_compute_capacity')
+    capacity = fields.Float('capacity(MWh)', compute='_compute_capacity')
     energy_sent_out_mwh = fields.Float(string='Energy Sent Out (MWh)', compute='_compute_energy_sent_out_mwh')
     capacity_payment = fields.Float('Capacity Payment', compute='_compute_capacity_payment')
     energy_payment = fields.Float('Energy Payment', compute='_compute_energy_payment')
@@ -679,7 +679,7 @@ class GencoBCParaemeter(models.Model):
 
     def _compute_invoiced_energy(self):
         for rec in self:
-            rec.invoiced_energy = (rec.billing_cycle_id.transmission_loss_factor/100 * rec.energy_sent_out_kwh) - rec.energy_import
+            rec.invoiced_energy = ((100 - rec.billing_cycle_id.transmission_loss_factor)/100 * rec.energy_sent_out_kwh) - rec.energy_import
     
     def _compute_capacity(self):
         for rec in self:

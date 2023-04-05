@@ -15,24 +15,30 @@
                             <field name="myto_rate_id" readonly="1"/>
                             <field name="calculation_type"/>
                             <field name="old_tlf"/>
-                            <field name="usd_fx_cbn" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
-                            <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell'])]}"/>
+                            <field name="usd_fx_cbn" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell', 'agip'])]}"/>
                             <field name="ncpi" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
-                            <field name="us_ppi" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="us_ppi" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="investment_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="gas_fuel_price_dollar" attrs="{'invisible': [('calculation_type', 'not in',
                              ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo'])]}"/>
-                            <field name="vfcr" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="vfcr" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
                             <field name="vfcr_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
-                            <field name="fixed_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="variable_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
-                            <field name="variable_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="fixed_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="insurance_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="general_expenses_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="fuel_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="variable_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="variable_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="energy_charge_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="capacity_charge_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
                             <field name="capital_recovery_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="startup_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="energy_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
-                            <field name="capacity_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
-                            <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell'])]}"/>
+                            <field name="energy_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="capacity_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="wholesale_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
                         </group>
                         <group string="Period Myto Rates">
                             <field name="billing_circle"/>
