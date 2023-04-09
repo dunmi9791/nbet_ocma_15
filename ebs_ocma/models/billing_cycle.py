@@ -90,6 +90,9 @@ class BillingCycle(models.Model):
         comodel_name='res.users', string='Responsible User.', default=lambda self: self.env.uid)
     payments_ids = fields.One2many('accounts.payments', compute='_circle_payments', string='Payments')
     receipts_ids = fields.One2many('accounts.payments', compute='_circle_receipts', string='Disco Receipts')
+    tlf_applied = fields.Boolean(
+        string='Tlf applied',
+        required=False)
 
     state = fields.Selection([
         ('draft', 'New'),
@@ -130,6 +133,8 @@ class BillingCycle(models.Model):
             if rec.date:
                 date = datetime.strptime(str(rec.date), DEFAULT_SERVER_DATE_FORMAT)
                 rec.days_in_month = monthrange(date.year, date.month)[1]
+            else:
+                rec.days_in_month = 30
     
     def _compute_hours_in_month(self):
         for record in self:
@@ -663,7 +668,7 @@ class GencoBCParaemeter(models.Model):
             billingcycle = rec.billing_cycle_id.id
             mytorate = rec.partner_id.myto_rate.id
             rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)])
-            rec.myto_energy_tariff = rates.energy_charge
+            rec.myto_energy_tariff = rates.energy_charge_tlf
 
         pass
 
@@ -679,7 +684,10 @@ class GencoBCParaemeter(models.Model):
 
     def _compute_invoiced_energy(self):
         for rec in self:
-            rec.invoiced_energy = ((100 - rec.billing_cycle_id.transmission_loss_factor)/100 * rec.energy_sent_out_kwh) - rec.energy_import
+            if rec.billing_cycle_id.tlf_applied:
+                rec.invoiced_energy = rec.energy_sent_out_kwh - rec.energy_import
+            else:
+                rec.invoiced_energy = ((100 - rec.billing_cycle_id.transmission_loss_factor)/100 * rec.energy_sent_out_kwh) - rec.energy_import
     
     def _compute_capacity(self):
         for rec in self:

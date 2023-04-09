@@ -55,6 +55,7 @@
                                 <field name="ref_no"/>
                                 <field name="hours_in_month"/>
                                 <field name="transmission_loss_factor"/>
+                                <field name="tlf_applied"/>
                             </group>
                         </group>
                         <group>

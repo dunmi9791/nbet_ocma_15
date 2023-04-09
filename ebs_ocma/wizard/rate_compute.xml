@@ -15,14 +15,20 @@
                             <field name="myto_rate_id" readonly="1"/>
                             <field name="calculation_type"/>
                             <field name="old_tlf"/>
+                            <field name="gas_hhv_price_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
                             <field name="usd_fx_cbn" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
-                            <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell', 'agip'])]}"/>
-                            <field name="ncpi" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
+                            <field name="gas_hhv_price" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="hhv_to_lhv" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="efficiency" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="fuel_cost_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="fuel_cost_naira" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="us_cpi" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell', 'agip', 'ibom'])]}"/>
+                            <field name="ncpi" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
                             <field name="us_ppi" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
                             <field name="investment_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="gas_fuel_price_dollar" attrs="{'invisible': [('calculation_type', 'not in',
-                             ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo'])]}"/>
-                            <field name="vfcr" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                             ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
+                            <field name="vfcr" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip', 'ibom'])]}"/>
                             <field name="vfcr_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="fixed_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
                             <field name="fixed_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
@@ -31,9 +37,12 @@
                             <field name="fuel_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="variable_o_m" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
                             <field name="variable_o_m_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="capital_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="tax_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="trans_loss_cost" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
                             <field name="energy_charge_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="capacity_charge_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
-                            <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
+                            <field name="capital_recovery" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip', 'ibom'])]}"/>
                             <field name="capital_recovery_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="startup_dollar" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="energy_charge" attrs="{'invisible': [('calculation_type', 'in', ['shell', 'agip'])]}"/>
@@ -43,23 +52,44 @@
                         <group string="Period Myto Rates">
                             <field name="billing_circle"/>
                             <field name="new_tlf"/>
+                            <field name="gas_hhv_price_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
                             <field name="usd_fx_cbn_cur"/>
+                            <field name="gas_hhv_price_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="hhv_to_lhv_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="efficiency_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="fuel_cost_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="fuel_cost_naira_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
                             <field name="usd_fx_cbn_sell_cur" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
-                            <field name="us_cpi_cur" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell'])]}"/>
-                            <field name="us_ppi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="fixed_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="variable_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
+                            <field name="us_cpi_cur" attrs="{'invisible': [('calculation_type', 'in', ['fipl', 'fiplo', 'shell', 'agip', 'ibom'])]}"/>
+                            <field name="us_ppi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="investment_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="fixed_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="insurance_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="general_expenses_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="fuel_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="variable_o_m_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell', 'agip'])]}"/>
+                            <field name="capital_cost_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="tax_cost_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="trans_loss_cost_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="energy_charge_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="capacity_charge_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="investment_naira" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="vfcr_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="capital_recovery_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="startup_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
-                            <field name="ncpi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo'])]}"/>
+                            <field name="ncpi_cur" attrs="{'invisible': [('calculation_type', 'not in', ['fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
                             <field name="gas_fuel_price_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in',
-                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo'])]}"/>
+                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'olorunsogo', 'omotosho'])]}"/>
                             <field name="vfcr_cur" attrs="{'invisible': [('calculation_type', 'not in',
-                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'shell'])]}"/>
-                            <field name="fixed_o_m_cur"/>
-                            <field name="variable_o_m_cur"/>
-                            <field name="capital_recovery_cur"/>
+                            ['successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', 'shell', 'olorunsogo', 'omotosho'])]}"/>
+                            <field name="fixed_o_m_cur" attrs="{'invisible': [('calculation_type', 'in', ['ibom'])]}"/>
+                            <field name="fixed_o_m_noncompute" attrs="{'invisible': [('calculation_type', 'not in', ['ibom'])]}"/>
+                            <field name="insurance_naira" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="general_expenses_naira" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="fuel_naira" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="variable_o_m_cur" attrs="{'invisible': [('calculation_type', 'in', ['ibom'])]}"/>
+                            <field name="variable_o_m_noncompute" attrs="{'invisible': [('calculation_type', 'not in', [ 'ibom'])]}"/>
+                            <field name="capital_recovery_cur" attrs="{'invisible': [('calculation_type', 'in', ['agip', 'ibom'])]}"/>
                             <field name="startup_naira" attrs="{'invisible': [('calculation_type', 'not in', ['shell'])]}"/>
                             <field name="energy_charge_cur"/>
                             <field name="energy_charge_tlf"/>
