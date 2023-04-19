@@ -38,6 +38,7 @@ class MytoRates(models.Model):
         ('calabar_nipp', 'CALABAR NIPP'),
         ('gbarain_nipp', 'GBARAIN NIPP'),
         ('mabon', 'MABON (Dadin Kowa Hydro)'),
+        ('direct_input', 'Direct Input'),
     ], string='Calculation Type')
 
     usd_fx_cbn = fields.Float(
@@ -49,9 +50,7 @@ class MytoRates(models.Model):
     old_tlf = fields.Float(
         string='Old TLF',
         required=False)
-    fixed_o_m = fields.Float(
-        string='Fixed O & M(n/mw/hr)',
-        required=False)
+    fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, digits='Ocma')
     variable_o_m = fields.Float(
         string='Variable O & M(n/mw/hr)',
         required=False)

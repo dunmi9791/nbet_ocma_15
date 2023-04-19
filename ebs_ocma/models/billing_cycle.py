@@ -660,14 +660,14 @@ class GencoBCParaemeter(models.Model):
         for rec in self:
             billingcycle = rec.billing_cycle_id.id
             mytorate = rec.partner_id.myto_rate.id
-            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)])
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate)], limit=1, order='id desc')
             rec.myto_capacity_tariff = rates.capacity_charge
 
     def _compute_energy_tariff(self):
         for rec in self:
             billingcycle = rec.billing_cycle_id.id
             mytorate = rec.partner_id.myto_rate.id
-            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)])
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate)], limit=1, order='id desc')
             rec.myto_energy_tariff = rates.energy_charge_tlf
 
         pass
