@@ -37,6 +37,7 @@
                             <field name="rate_category"/>
                             <field name="rate"/>
                             <field name="rate_gas_price"/>
+                            <field name="is_disco"/>
                         </group>
                     </page>
                 </page>

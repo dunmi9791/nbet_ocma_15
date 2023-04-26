@@ -125,18 +125,24 @@
                                 </field>
                             </page>
                             <page name="parameters" string="Disco Parameters">
-                                <field name="bc_disco_parameter_ids" nolabel="1">
+                                <field name="bc_disco_parameter_ids" domain="[('partner_id.is_disco', '=', True)]" nolabel="1">
                                     <!-- <tree limit="10"> -->
-                                    <tree editable="bottom">
+                                    <tree context="{'action_id': 'ebs_ocma.action_disco_parameters'}">
                                         <field name="partner_id" />
                                         <field name="name" />
+                                        <field name="genco_parameters_ids"  widget="many2many_tags" width="0.5" optional="show"/>
                                         <field name="capacity_delivered" sum="Total Capacity Delivered" width="0.5" optional="show"/>
                                         <field name="energy_delivered" sum="Total Energy Delivered" width="0.5" optional="show"/>
                                         <field name="capacity_shared" sum="Total Energy Delivered" width="0.5" optional="show"/>
                                         <field name="energy_shared" sum="Total Energy Shared" width="0.5" optional="show"/>
                                         <field name="percentage_total" sum="Total Percentage Total" width="0.5" optional="show"/>
+                                        <field name="percentage_disco" sum="Total Percentage disco" width="0.5" optional="show"/>
+                                        <field name="percentage_disco_cap" sum="Total Percentage disco" width="0.5" optional="show"/>
                                         <field name="portion_capacity" sum="Total Portion Capacity" width="0.5" optional="show"/>
                                         <field name="portion_energy" sum="Total Portion Energy" width="0.5" optional="show"/>
+                                        <field name="capacity_share_lines"/>
+                                        <field name="capacity_charge" width="0.5" optional="show"/>
+                                        <field name="energy_charge" width="0.5" optional="show"/>
                                         <field name="invoice_value" sum="Total Invoice Value" width="0.5" optional="show"/>
                                         <field name="billing_cycle_id" context="{'default_billing_cycle_id': active_id}" invisible="1" />
                                     </tree>
@@ -171,6 +177,9 @@
                             <page name="summary" string="Summary and Analysis">
 
                             </page>
+                            <page name="capacity_share" string="Capacity Share">
+                                <field name="capacity_share_lines"/>
+                            </page>
 
                         </notebook>
                         <group>
@@ -181,6 +190,8 @@
                             <group string='DisCo'>
                                 <field name="disco_total_capacity_delivered" />
                                 <field name="disco_total_energy_delivered" />
+                                <field name="disco_share_capacity_delivered" />
+                                <field name="disco_share_energy_delivered" />
                             </group>
                         </group>
                         <group>
@@ -188,6 +199,8 @@
                             <field name="energy_diff" />
                             <field name="disco_capacity_delivered" />
                             <field name="disco_energy_delivered" />
+                            <field name="disco_percent_share_capacity"/>
+                            <field name="disco_percent_share_energy"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -289,5 +302,29 @@
                 </form>
             </field>
         </record>
+        <record id="view_disco_parameters_form" model="ir.ui.view">
+    <field name="name">disco.parameters.form</field>
+    <field name="model">ebs_ocma.disco.invoice.billing_cycle.parameter</field>
+    <field name="arch" type="xml">
+        <form string="Disco Parameters">
+            <!-- Add other fields for the sale.order model -->
+            <field name="partner_id"/>
+            <field name="capacity_delivered"/>
+            <field name="energy_delivered"/>
+            <!-- Add the one2many field with a tree view -->
+            <field name="capacity_share_lines">
+                <tree editable="bottom">
+                    <field name="capacity_charge"/>
+                    <field name="energy_charge"/>
+                    <field name="billing_cycle_id"/>
+                    <field name="share_of_capacity"/>
+                    <field name="share_of_energy"/>
+
+                </tree>
+            </field>
+        </form>
+    </field>
+</record>
+
     </data>
 </odoo>

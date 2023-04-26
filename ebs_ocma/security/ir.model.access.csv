@@ -33,3 +33,4 @@ access_ebs_ocma_rates_myto,access_ebs_ocma_rates_myto,model_ocma_myto_rate,base.
 access_ebs_ocma_rates_compute,access_ebs_ocma_rates_compute,model_ebs_ocma_rate_computation,base.group_user,1,1,1,1
 access_ebs_ocma_us_cpi,access_ebs_ocma_us_cpi,model_uscpi_indices,base.group_user,1,1,1,1
 access_ebs_ocma_input,access_ebs_ocma_inputs,model_import_input_line_wizard,base.group_user,1,1,1,1
+access_ebs_ocma_share,access_ebs_ocma_share,model_capacity_share_lines,base.group_user,1,1,1,1

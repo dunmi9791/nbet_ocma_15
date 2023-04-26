@@ -70,6 +70,8 @@ class RateCoputation(models.TransientModel):
     capacity_charge_dollar = fields.Float(string='Capacity charge($/mw/hr)', required=False, digits='Ocma')
     capacity_charge_dollar_cur = fields.Float(string='Capacity charge($/mw/hr)', required=False, digits='Ocma',
                                               compute='_capacity_charge_dollar_cur')
+    capacity_charge_dollar_dup = fields.Float(string='Capacity charge($/mw/hr)', required=False, digits='Ocma',
+                                              compute='_capacity_charge_dollar_dup')
     capacity_charge_cur = fields.Float(string='Capacity charge(n/mw/hr)', required=False, compute='_capacity_charge_cur')
     capacity_charge_cur_noncompute = fields.Float(string='Capacity charge(n/mw/hr)', required=False, )
     wholesale_charge = fields.Float(string='Wholesale charge(n/mw/hr)', required=False)
@@ -125,6 +127,9 @@ class RateCoputation(models.TransientModel):
     efficiency_cur = fields.Float(string='Efficiency %', required=False, default=32.00)
     trans_loss_cost_cur = fields.Float(string='trans loss cost', default=735)
     trans_loss_cost = fields.Float(string='transmission loss cost(0.75%)')
+    capacity_inv = fields.Float(string='Capacity Invoice')
+    agip_dependable_capacity = fields.Float(string='Agip Dependable Capacity')
+    hours_month = fields.Float(string='Hours in the Month', default=720)
 
     def fix_om_cur(self):
         for record in self:
@@ -252,6 +257,15 @@ class RateCoputation(models.TransientModel):
                                                         record.insurance_dollar_cur + record.general_expenses_dollar_cur
                 else:
                     record.capacity_charge_dollar_cur = 0
+
+    @api.depends('capacity_inv', 'agip_dependable_capacity', 'hours_month')
+    def _capacity_charge_dollar_dup(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip', ]:
+                    record.capacity_charge_dollar_dup = round(record.capacity_inv / (record.agip_dependable_capacity * record.hours_month), 6)
+                else:
+                    record.capacity_charge_dollar_dup = 0
 
     @api.depends('investment_dollar_cur', 'usd_fx_cbn_cur')
     def _investment_naira(self):
@@ -488,8 +502,12 @@ class RateCoputation(models.TransientModel):
                 if record.calculation_type in ['hydros', 'successor_gencos', 'transcorp_ugheli', 'fipl', 'fiplo', "shell", 'olorunsogo', 'omotosho', 'mabon']:
                     record.capacity_charge_cur = record.capital_recovery_cur + record.fixed_o_m_cur
                 elif record.calculation_type in ['agip']:
-                    record.capacity_charge_cur = record.investment_naira + record.fixed_o_m_cur + record.insurance_naira \
-                                                 + record.general_expenses_naira
+                    try:
+                        record.capacity_charge_cur = record.capacity_charge_dollar_dup * record.usd_fx_cbn_cur
+                    except ZeroDivisionError:
+                        record.capacity_charge_cur = 0.00
+                    # record.capacity_charge_cur = record.investment_naira + record.fixed_o_m_cur + record.insurance_naira \
+                    #                              + record.general_expenses_naira
                 elif record.calculation_type in ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp']:
                     record.capacity_charge_cur = record.fixed_o_m_noncompute + record.capital_cost_cur + (0.666 * record.tax_cost_cur)
                 elif record.calculation_type in ['direct_input']:

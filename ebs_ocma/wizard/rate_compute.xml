@@ -54,6 +54,9 @@
                         <group string="Period Myto Rates">
                             <field name="billing_circle"/>
                             <field name="new_tlf"/>
+                            <field name="capacity_inv" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="agip_dependable_capacity" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
+                            <field name="hours_month" attrs="{'invisible': [('calculation_type', 'not in', ['agip'])]}"/>
                             <field name="gas_hhv_price_dollar_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>
                             <field name="usd_fx_cbn_cur"/>
                             <field name="gas_hhv_price_cur" attrs="{'invisible': [('calculation_type', 'not in', ['ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp'])]}"/>

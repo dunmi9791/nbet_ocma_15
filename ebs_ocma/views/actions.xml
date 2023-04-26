@@ -99,6 +99,20 @@
         <p class="oe_no_content_create">Click to create a new Category</p>
       </field>
     </record>
+    <record id="action_disco_parameters" model="ir.actions.act_window">
+    <field name="name">disco Parameters</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">ebs_ocma.disco.invoice.billing_cycle.parameter</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_disco_parameters_form"/>
+<!--    <field name="search_view_id" ref="view_order_filter"/>-->
+    <field name="help" type="html">
+        <p class="o_view_nocontent_empty_folder">
+            Create a new disco parameter
+        </p>
+    </field>
+</record>
+
 
 
   </data>

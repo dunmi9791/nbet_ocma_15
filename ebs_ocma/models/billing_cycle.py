@@ -172,6 +172,8 @@ class BillingCycle(models.Model):
     # genco_invoice_ids = fields.Many2many(comodel_name='account.move', string='Genco Bills', copy=False, compute='_get_genco_bills')
     genco_invoice_ids = fields.Many2many(comodel_name='account.move', string='Genco Bills', copy=False)
     genco_invoices_count = fields.Integer(string='Bills Count', compute="_compute_bills_count")
+    capacity_share_lines = fields.One2many(comodel_name='capacity.share.lines', inverse_name='billing_cycle_id',
+                                           string='Capacity_share_lines', required=False)
 
     # disco_invoice_ids = fields.Many2many(comodel_name='account.move', relation='account_move_disco_invoice_rel', string='Disco Invoices', copy=False, compute='_get_disco_invoices')
 
@@ -234,8 +236,16 @@ class BillingCycle(models.Model):
             related_disco_invoicing = self.env["ebs_ocma.disco.invoice"].search([("billing_cycle_id", "=", rec.id)], limit=1)
             rec.bc_disco_parameter_ids = related_disco_invoicing.mapped('disco_parameter_ids')
 
-    disco_total_capacity_delivered = fields.Float(string='Disco Total Energy Delivered', compute='_compute_total_capacity_delivered')
+    disco_total_capacity_delivered = fields.Float(string='Disco Total Capacity Delivered', compute='_compute_total_capacity_delivered')
     disco_total_energy_delivered = fields.Float(string='Disco Total Energy Delivered', compute='_compute_total_energy_delivered')
+    disco_share_capacity_delivered = fields.Float(string='Disco share of Capacity Delivered',
+                                                  compute='_compute_share_capacity_delivered')
+    disco_share_energy_delivered = fields.Float(string='Disco share of Energy Delivered',
+                                                compute='_compute_share_energy_delivered')
+    disco_percent_share_capacity = fields.Float(string='Disco % share of Total Capacity sent Out',
+                                                compute='_compute_percent_total_capacity')
+    disco_percent_share_energy = fields.Float(string='Disco % share of Total Energy sent Out',
+                                              compute='_compute_percent_total_energy')
 
     genco_total_capacity = fields.Float(string='Genco Total Capacity', compute='_compute_total_capacity')
     genco_total_energy_sent_out = fields.Float(string='Genco Total Energy Sent Out', compute='_compute_total_energy_sent_out')
@@ -250,6 +260,29 @@ class BillingCycle(models.Model):
             else:
                 rec.disco_total_capacity_delivered = 0
 
+    @api.depends('bc_disco_parameter_ids', 'bc_disco_parameter_ids.capacity_delivered',
+                 'bc_disco_parameter_ids.partner_id.is_disco')
+    @api.onchange('bc_disco_parameter_ids.capacity_delivered')
+    # def _compute_share_capacity_delivered(self):
+    #     for rec in self:
+    #         if rec.bc_disco_parameter_ids:
+    #             disco_capacity = 0
+    #             for line in rec.bc_disco_parameter_ids:
+    #                 if line.partner_id.is_disco:
+    #                     disco_capacity += line.capacity_delivered
+    #                 rec.disco_share_capacity_delivered = disco_capacity
+    #
+    #         else:
+    #             rec.disco_share_capacity_delivered = 0
+    def _compute_share_capacity_delivered(self):
+        groups = self.bc_disco_parameter_ids.filtered(lambda r: r.partner_id.is_disco)
+        if groups:
+            for line in groups:
+                self.disco_share_capacity_delivered += line.capacity_delivered
+
+        else:
+            self.disco_share_capacity_delivered = 0
+
     def _compute_total_energy_delivered(self):
         for rec in self:
             if rec.bc_disco_parameter_ids:
@@ -257,6 +290,36 @@ class BillingCycle(models.Model):
                     rec.disco_total_energy_delivered += line.energy_delivered
             else:
                 rec.disco_total_energy_delivered = 0
+
+    @api.depends('disco_share_capacity_delivered', 'disco_total_capacity_delivered')
+    def _compute_percent_total_capacity(self):
+        for rec in self:
+            try:
+                percentage = rec.disco_share_capacity_delivered / rec.disco_total_capacity_delivered * 100
+                rec.disco_percent_share_capacity = round(percentage, 2)
+            except ZeroDivisionError:
+                rec.disco_percent_share_capacity = 0.00
+
+    @api.depends('disco_share_energy_delivered', 'disco_total_energy_delivered')
+    def _compute_percent_total_energy(self):
+        for rec in self:
+            try:
+                percentage = rec.disco_share_energy_delivered / rec.disco_total_energy_delivered * 100
+                rec.disco_percent_share_energy = round(percentage, 2)
+            except ZeroDivisionError:
+                rec.disco_percent_share_energy = 0.00
+
+    @api.depends('bc_disco_parameter_ids', 'bc_disco_parameter_ids.energy_delivered',
+                 'bc_disco_parameter_ids.partner_id.is_disco')
+    @api.onchange('bc_disco_parameter_ids.energy_delivered')
+    def _compute_share_energy_delivered(self):
+        groups = self.bc_disco_parameter_ids.filtered(lambda r: r.partner_id.is_disco)
+        if groups:
+            for line in groups:
+                self.disco_share_energy_delivered += line.energy_delivered
+
+        else:
+            self.disco_share_energy_delivered = 0
 
     def _compute_total_capacity(self):
         for rec in self:
@@ -660,14 +723,14 @@ class GencoBCParaemeter(models.Model):
         for rec in self:
             billingcycle = rec.billing_cycle_id.id
             mytorate = rec.partner_id.myto_rate.id
-            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate)], limit=1, order='id desc')
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)],)
             rec.myto_capacity_tariff = rates.capacity_charge
 
     def _compute_energy_tariff(self):
         for rec in self:
             billingcycle = rec.billing_cycle_id.id
             mytorate = rec.partner_id.myto_rate.id
-            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate)], limit=1, order='id desc')
+            rates = self.env['hydro.rates'].search([('rate_id', '=', mytorate), ('billing_circle', '=', billingcycle)],)
             rec.myto_energy_tariff = rates.energy_charge_tlf
 
         pass
@@ -705,9 +768,13 @@ class GencoBCParaemeter(models.Model):
             else:
                 rec.energy_sent_out_mwh = 0
 
+    @api.onchange('billing_cycle_id.hours_in_month')
     def _compute_capacity_payment(self):
         for rec in self:
-            rec.capacity_payment = rec.capacity * rec.billing_cycle_id.hours_in_month * rec.myto_capacity_tariff
+            if rec.capacity > 0:
+                rec.capacity_payment = rec.capacity * rec.billing_cycle_id.hours_in_month * rec.myto_capacity_tariff
+            elif rec.capacity <= 0:
+                rec.capacity_payment = 0
     
     def _compute_energy_payment(self):
         for rec in self:
@@ -756,25 +823,91 @@ class BCDiscoParaemeter(models.Model):
 
     capacity_shared = fields.Float(string='Capacity Shared (Mw/Month)')
     energy_shared = fields.Float(string='Energy Shared (kWh)')
+    genco_parameters_ids = fields.Many2many(
+        comodel_name='ebs_ocma.genco.invoice.billing_cycle.parameter',
+        relation='billing_circle_genco_capacity_share_rel',
+        string='Genco_parameters_ids')
 
-    percentage_total = fields.Float(string='Percentage of total', required=False, compute='_compute_percentage_total')
+    percentage_total = fields.Float(string='Percentage of total energy', required=False, compute='_compute_percentage_total')
+    percentage_disco = fields.Float(string='Percentage of disco share energy', required=False, compute='_compute_percentage_disco')
+    percentage_disco_cap = fields.Float(string='Percentage of disco share capacity', required=False,
+                                        compute='_compute_percentage_disco_cap')
     portion_capacity = fields.Float(string='Portion Capacity', required=False, compute='_compute_portion_capacity')
     portion_energy = fields.Float(string='Portion Energy', required=False, compute='_compute_portion_energy')
 
     percent_shared = fields.Float(string='% Shared', compute='_compute_percent_shared')
     
-    invoice_value = fields.Float(string='Invoice Value', required=False)
+    invoice_value = fields.Float(string='Invoice Value', required=False, compute='_compute_invoice_value')
+    capacity_charge = fields.Float(string='Capacity Charge', required=False, compute='_compute_capacity_charge')
+    energy_charge = fields.Float(string='Energy Charge', required=False, )
+    disco = fields.Boolean(string='Disco', required=False, compute='_is_disco')
+    capacity_charge_compute = fields.Boolean(string='Capacity charge computed',)
 
     billing_cycle_id = fields.Many2one(comodel_name='billing.cycle', string="Billing Cycle")
+    capacity_share_lines = fields.One2many(comodel_name='capacity.share.lines', inverse_name='disco_parameter_id',
+                                           string='Capacity_share_lines', required=False)
     
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
         if self.partner_id:
             self.name = self.partner_id.name
 
+    def _is_disco(self):
+        for rec in self:
+            if rec.partner_id.is_disco:
+                rec.disco = True
+            else:
+                rec.disco = False
+
+
+    @api.depends('billing_cycle_id.disco_percent_share_capacity', 'genco_parameters_ids',
+                 'billing_cycle_id.disco_percent_share_energy')
+    def _compute_capacity_charge(self):
+        for disco_param in self:
+            if disco_param.capacity_charge_compute:
+                # disco_parameters = disco_param.id
+                disco_param.write({'capacity_charge_compute': False})
+                disco_param.write({'capacity_share_lines': [(5, 0, 0)]})
+                share_lines = [(0, 0, {'share_of_capacity': ((disco_param.billing_cycle_id.disco_percent_share_capacity / 100) * genco_param.capacity) * (disco_param.percentage_disco_cap / 100),
+                                       'capacity_price': genco_param.myto_capacity_tariff, 'billing_cycle_id': disco_param.billing_cycle_id.id,
+                                       'share_of_energy': ((disco_param.billing_cycle_id.disco_percent_share_energy / 100)  * genco_param.energy_sent_out_mwh) * (disco_param.percentage_disco / 100),
+                                       'energy_price': genco_param.myto_energy_tariff})
+                               for genco_param in disco_param.genco_parameters_ids]
+                disco_param.capacity_share_lines = share_lines
+                disco_param.capacity_charge = sum(line.capacity_charge for line in disco_param.capacity_share_lines)
+                disco_param.energy_charge = sum(line.energy_charge for line in disco_param.capacity_share_lines)
+                disco_param.write({'capacity_charge_compute': True})
+            else:
+                share_lines = [(0, 0, {'share_of_capacity': ((disco_param.billing_cycle_id.disco_percent_share_capacity / 100) * genco_param.capacity) * (disco_param.percentage_disco_cap / 100),
+                                       'capacity_price': genco_param.myto_capacity_tariff,
+                                       'billing_cycle_id': disco_param.billing_cycle_id.id, 'share_of_energy': ((disco_param.billing_cycle_id.disco_percent_share_energy / 100)  * genco_param.energy_sent_out_mwh) * (disco_param.percentage_disco / 100),
+                                       'energy_price': genco_param.myto_energy_tariff})
+                               for genco_param in disco_param.genco_parameters_ids]
+                disco_param.capacity_share_lines = share_lines
+                disco_param.capacity_charge = sum(line.capacity_charge for line in disco_param.capacity_share_lines)
+                disco_param.energy_charge = sum(line.energy_charge for line in disco_param.capacity_share_lines)
+                # disco_parameters = disco_param.id
+                disco_param.write({'capacity_charge_compute': True})
+
+    @api.depends('capacity_charge', 'energy_charge')
+    def _compute_invoice_value(self):
+        for rec in self:
+            rec.invoice_value = rec.capacity_charge + rec.energy_charge
+
     def _compute_percentage_total(self):
         for rec in self:
-            rec.percentage_total = (rec.energy_delivered / rec.billing_cycle_id.disco_total_energy_delivered if rec.billing_cycle_id.disco_total_energy_delivered != 0 else 0) * 100
+            rec.percentage_total = (rec.energy_delivered / rec.billing_cycle_id.disco_total_energy_delivered
+                                    if rec.billing_cycle_id.disco_total_energy_delivered != 0 else 0) * 100
+
+    def _compute_percentage_disco(self):
+        for rec in self:
+            rec.percentage_disco = (rec.energy_delivered / rec.billing_cycle_id.disco_share_energy_delivered
+                                    if rec.billing_cycle_id.disco_share_energy_delivered != 0 else 0) * 100
+
+    def _compute_percentage_disco_cap(self):
+        for rec in self:
+            rec.percentage_disco_cap = (rec.capacity_delivered / rec.billing_cycle_id.disco_share_capacity_delivered
+                                        if rec.billing_cycle_id.disco_share_capacity_delivered != 0 else 0) * 100
 
     def _compute_portion_capacity(self):
         for rec in self:
@@ -787,3 +920,32 @@ class BCDiscoParaemeter(models.Model):
     def _compute_percent_shared(self):
         for rec in self:
             rec.percent_shared = rec.energy_shared / rec.total_energy_shared if rec.total_energy_shared != 0 else 0
+
+
+class CapacityShareLines(models.Model):
+    _name = 'capacity.share.lines'
+    _description = 'Disco Capacity Share lines'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    billing_cycle_id = fields.Many2one(comodel_name='billing.cycle', string="Billing Cycle")
+    disco_parameter_id = fields.Many2one(comodel_name='ebs_ocma.disco.invoice.billing_cycle.parameter',
+                                         string="Disco Parameter")
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Disco')
+    partner_id_genco = fields.Many2many(comodel_name='res.partner', string='Genco')
+    share_of_capacity = fields.Float('Share of capacity(MWh)')
+    capacity_price = fields.Float(string='capacity price', required=False,)
+    capacity_charge = fields.Float(string='Capacity Charge', compute='_capacity_charge')
+    share_of_energy = fields.Float('Share of energy(MWh)')
+    energy_price = fields.Float(string='Energy Price', required=False, )
+    energy_charge = fields.Float(string='Energy Charge', compute='_energy_charge')
+
+    @api.depends('share_of_capacity', 'capacity_price', 'billing_cycle_id.hours_in_month')
+    def _capacity_charge(self):
+        for rec in self:
+            rec.capacity_charge = rec.share_of_capacity * rec.capacity_price * rec.billing_cycle_id.hours_in_month
+
+    def _energy_charge(self):
+        for rec in self:
+            rec.energy_charge = rec.share_of_energy * rec.energy_price
+
+
