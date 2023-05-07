@@ -38,6 +38,7 @@
                             <field name="rate"/>
                             <field name="rate_gas_price"/>
                             <field name="is_disco"/>
+                            <field name="is_genco"/>
                         </group>
                     </page>
                 </page>
