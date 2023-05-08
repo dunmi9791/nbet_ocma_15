@@ -32,6 +32,14 @@ access_ebs_ocma_rates,access_ebs_ocma_rates,model_hydro_rates,base.group_user,1,
 access_ebs_ocma_rates_myto,access_ebs_ocma_rates_myto,model_ocma_myto_rate,base.group_user,1,1,1,1
 access_ebs_ocma_rates_compute,access_ebs_ocma_rates_compute,model_ebs_ocma_rate_computation,base.group_user,1,1,1,1
 access_ebs_ocma_us_cpi,access_ebs_ocma_us_cpi,model_uscpi_indices,base.group_user,1,1,1,1
+access_ebs_ocma_fx_cbn,access_ebs_ocma_fx_cbn,model_fx_cbn,base.group_user,1,1,1,1
+access_ebs_ocma_ncpi,access_ebs_ocma_ncpi,model_ncpi_indices,base.group_user,1,1,1,1
+access_ebs_ocma_us_ppi,access_ebs_ocma_us_ppi,model_usppi_indices,base.group_user,1,1,1,1
+access_ebs_ocma_nigerian_cpi,access_ebs_ocma_nigerian_cpi,model_nigeriancpi_indices,base.group_user,1,1,1,1
+access_ebs_ocma_fx_cbn_selling,access_ebs_ocma_fx_cbn_selling,model_fx_cbn_selling,base.group_user,1,1,1,1
+access_ebs_ocma_fx_cbn_buying,access_ebs_ocma_fx_cbn_buying,model_fx_cbn_buying,base.group_user,1,1,1,1
+
+
 access_ebs_ocma_input,access_ebs_ocma_inputs,model_import_input_line_wizard,base.group_user,1,1,1,1
 access_ebs_ocma_share,access_ebs_ocma_share,model_capacity_share_lines,base.group_user,1,1,1,1
 access_ebs_ocma_params,access_ebs_ocma_params,model_ebs_ocma_genco_params,base.group_user,1,1,1,1

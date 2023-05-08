@@ -43,13 +43,18 @@ class BillingCycle(models.Model):
     title = fields.Char(string='Title')
 
     name = fields.Char(string='Billing Cycle', compute="billing_cycle")
-    month = fields.Selection(selection=MONTHS, string='Billing Month')
-    year = fields.Selection(selection=YEARS,
-                            string='Billing Year', store=True)
+    month = fields.Char(string='Billing Month', compute='_get_month_name')
+    year = fields.Char(string='Billing Year',  compute='_get_year')
     days_in_month = fields.Integer('Days In Month', default="30", compute="_compute_days_in_month")
     
     date = fields.Date(
-        string='Date',
+        string='FSS Date',
+        required=False)
+    date_start = fields.Date(
+        string='Start Date',
+        required=False)
+    date_end = fields.Date(
+        string='End Date',
         required=False)
     ref_no = fields.Char(
         string='Reference Number',
@@ -121,17 +126,44 @@ class BillingCycle(models.Model):
         
     def action_cancel(self):
         self.state='cancel'
+
+    def _get_month_name(self):
+        for rec in self:
+            date_obj = rec.date_start
+            if date_obj:
+                month_number = date_obj.month
+
+                month_names = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ]
+
+                month_name = month_names[month_number - 1]
+
+                rec.month = month_name
+            else:
+                rec.month = False
+
+    def _get_year(self):
+        for rec in self:
+            date_obj = rec.date_start
+            if date_obj:
+                year = str(date_obj.year)
+                rec.year = year
+
+            else:
+                rec.year = False
         
     # state = fields.Selection([
     #     ('invoice_verification', 'Invoice Verification'),
     #     ('done', 'Verified'),
     # ], string='state', default="draft", help="A new record is in draft, once it is validated, it goes to open and then it is approved in Done state")
     
-    @api.depends('date')
+    @api.depends('date_start')
     def _compute_days_in_month(self):
         for rec in self:
-            if rec.date:
-                date = datetime.strptime(str(rec.date), DEFAULT_SERVER_DATE_FORMAT)
+            if rec.date_start:
+                date = datetime.strptime(str(rec.date_start), DEFAULT_SERVER_DATE_FORMAT)
                 rec.days_in_month = monthrange(date.year, date.month)[1]
             else:
                 rec.days_in_month = 30

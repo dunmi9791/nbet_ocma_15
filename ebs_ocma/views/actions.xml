@@ -99,6 +99,66 @@
         <p class="oe_no_content_create">Click to create a new Category</p>
       </field>
     </record>
+    <record id="fx_cbn_view_action" model="ir.actions.act_window">
+      <field name="name">FX CBN Rate</field>
+      <field name="res_model">fx.cbn</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+    <record id="ncpi_view_action" model="ir.actions.act_window">
+      <field name="name">NCPI</field>
+      <field name="res_model">ncpi.indices</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+    <record id="usppi_view_action" model="ir.actions.act_window">
+      <field name="name">USPPI</field>
+      <field name="res_model">usppi.indices</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+    <record id="nigerian_cpi_view_action" model="ir.actions.act_window">
+      <field name="name">NigerianCPI</field>
+      <field name="res_model">nigeriancpi.indices</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+    <record id="fx_cbn_selling_view_action" model="ir.actions.act_window">
+      <field name="name">FX CBN Selling Rate</field>
+      <field name="res_model">fx.cbn.selling</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
+    <record id="fx_cbn_buying_view_action" model="ir.actions.act_window">
+      <field name="name">FX CBN Buying Rate</field>
+      <field name="res_model">fx.cbn.buying</field>
+      <field name="view_mode">tree,form,pivot,graph</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="oe_no_content_create">Click to create a new Category</p>
+      </field>
+    </record>
     <record id="action_disco_parameters" model="ir.actions.act_window">
     <field name="name">disco Parameters</field>
     <field name="type">ir.actions.act_window</field>

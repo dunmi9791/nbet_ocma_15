@@ -47,6 +47,8 @@
                         <group>
                             <group>
                                 <field name="name"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
                                 <field name="month"/>
                                 <field name="year"/>
                                 <field name="days_in_month"/>
@@ -61,12 +63,12 @@
                         </group>
                         <group>
                             <group>
-                                <field name="cbn_average"/>
-                                <field name="nbet_dist_rate"/>
-                                <field name="nbet_dist_azura"/>
-                                <field name="agip_quaterly_index"/>
-                                <field name="azura_fx_date"/>
-                                <field name="azura_fx_value"/>
+<!--                                <field name="cbn_average"/>-->
+<!--                                <field name="nbet_dist_rate"/>-->
+<!--                                <field name="nbet_dist_azura"/>-->
+<!--                                <field name="agip_quaterly_index"/>-->
+<!--                                <field name="azura_fx_date"/>-->
+<!--                                <field name="azura_fx_value"/>-->
                             </group>
                             <group>
                                 <field name="additional_notes"/>
@@ -331,6 +333,22 @@
         </form>
     </field>
 </record>
+        <record id="billing_cycle_view_tree" model="ir.ui.view">
+            <field name="name">billing_cycle_view_tree</field>
+            <field name="model">billing.cycle</field>
+            <field name="arch" type="xml">
+                <tree string="billing cycle tree">
+                    <field name="name"/>
+                    <field name="hours_in_month"/>
+                    <field name="date"/>
+                    <field name="transmission_loss_factor"/>
+                    <field name="genco_total_capacity"/>
+                    <field name="genco_total_energy_sent_out"/>
+                    <field name="disco_total_capacity_delivered"/>
+                    <field name="disco_total_energy_delivered"/>
+                </tree>
+            </field>
+        </record>
 
     </data>
 </odoo>

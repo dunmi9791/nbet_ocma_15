@@ -3,6 +3,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import date
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from calendar import monthrange
 
 
 class RateCoputation(models.TransientModel):
@@ -127,9 +130,10 @@ class RateCoputation(models.TransientModel):
     efficiency_cur = fields.Float(string='Efficiency %', required=False, default=32.00)
     trans_loss_cost_cur = fields.Float(string='trans loss cost', default=735)
     trans_loss_cost = fields.Float(string='transmission loss cost(0.75%)')
-    capacity_inv = fields.Float(string='Capacity Invoice')
+    capacity_inv = fields.Float(string='Capacity Invoice', compute='_capacity_invoice')
     agip_dependable_capacity = fields.Float(string='Agip Dependable Capacity')
-    hours_month = fields.Float(string='Hours in the Month', default=720)
+    hours_month = fields.Float(string='Hours in the Month', compute='_compute_hours_in_month')
+    days_month = fields.Float(string='days in month', compute='_compute_days_in_month')
 
     def fix_om_cur(self):
         for record in self:
@@ -147,6 +151,20 @@ class RateCoputation(models.TransientModel):
                 'wholesale_charge': record.wholesale_charge_cur,
                 'billing_circle': record.billing_circle.id,
                 })
+
+    @api.depends('billing_circle.date_start')
+    def _compute_days_in_month(self):
+        for rec in self:
+            if rec.billing_circle.date_start:
+                date = datetime.strptime(str(rec.billing_circle.date_start), DEFAULT_SERVER_DATE_FORMAT)
+                rec.days_month = monthrange(date.year, date.month)[1]
+            else:
+                rec.days_month = 30
+
+    @api.depends('days_month')
+    def _compute_hours_in_month(self):
+        for record in self:
+            record.hours_month = record.days_month * 24
 
     @api.depends('vfcr_dollar', 'us_ppi_cur', 'us_ppi')
     def _vfcr_cur_dollar(self):
@@ -180,6 +198,15 @@ class RateCoputation(models.TransientModel):
                     record.investment_dollar_cur = record.investment_dollar * record.us_ppi_cur / record.us_ppi
                 else:
                     record.investment_dollar_cur = 0
+
+    @api.depends('investment_dollar', 'us_ppi_cur')
+    def _capacity_invoice(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['agip']:
+                    record.capacity_inv = record.capacity_charge_dollar_cur * (record.agip_dependable_capacity * 1000)
+                else:
+                    record.capacity_inv = 0
 
     @api.depends('insurance_dollar', 'us_ppi_cur', 'us_ppi')
     def _insurance_dollar_cur(self):
