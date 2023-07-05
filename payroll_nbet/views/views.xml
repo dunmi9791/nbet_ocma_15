@@ -1,0 +1,31 @@
+<odoo>
+  <data>
+    <!-- Inherit Form View to Modify it -->
+    <record id="employee_rank_form_inherit" model="ir.ui.view">
+        <field name="name">employee.rank.form.inherit</field>
+        <field name="model">rank.rank</field>
+        <field name="inherit_id" ref="hr_grade_rank.view_employee_rank_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='salary_range']" position="replace">
+                <!-- Add your fields or attributes here -->
+                <field name="salary"/>
+            </xpath>
+
+        </field>
+    </record>
+      <record id="employee_rank_tree_inherit" model="ir.ui.view">
+          <field name="name">employee.rank.tree.inherit</field>
+          <field name="model">rank.rank</field>
+          <field name="inherit_id" ref="hr_grade_rank.view_employee_rank_tree"/>
+          <field name="arch" type="xml">
+
+              <xpath expr="//field[@name='salary_range']" position="replace">
+                  <!-- Add new fields here -->
+                  <field name="salary"/>
+              </xpath>
+
+          </field>
+      </record>
+  </data>
+</odoo>
