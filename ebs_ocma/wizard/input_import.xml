@@ -16,7 +16,7 @@
                         </div>
                    </group>
                    <footer>
-                        <button string="Import input Lines" name="input_file" type="object" class="oe_highlight"/>
+                        <button string="Import input Lines" name="input_genco_file" type="object" class="oe_highlight"/>
                         or
                         <button string="_Cancel" class="btn-default" special="cancel" />
                    </footer>
@@ -44,7 +44,7 @@
                         </div>
                    </group>
                    <footer>
-                        <button string="Import input Lines" name="input_file" type="object" class="oe_highlight"/>
+                        <button string="Import input Lines" name="input_disco_file" type="object" class="oe_highlight"/>
                         or
                         <button string="_Cancel" class="btn-default" special="cancel" />
                    </footer>
@@ -52,7 +52,7 @@
             </field>
         </record>
         <record model = "ir.actions.act_window" id = "disco_line_import_wizard_action">
-            <field name="name">Import Input Lines</field>
+            <field name="name">Import Disco Lines</field>
            <field name="res_model">import.disco.line.wizard</field>
            <field name="view_mode">form</field>
            <field name="target">new</field>

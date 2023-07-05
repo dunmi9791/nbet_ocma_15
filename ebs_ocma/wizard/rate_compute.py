@@ -35,12 +35,12 @@ class RateCoputation(models.TransientModel):
         required=False)
 
     usd_fx_cbn = fields.Float(string='Usd/naira fx CBN', required=False,)
-    usd_fx_cbn_cur = fields.Float(string='Usd/naira fx CBN', required=False, )
-    usd_fx_cbn_sell_cur = fields.Float(string='Usd/naira fx CBN Selling', required=False, )
+    usd_fx_cbn_cur = fields.Float(string='Usd/naira fx CBN', required=False, compute='_usd_fx_cbn_cur', store=True, readonly=False)
+    usd_fx_cbn_sell_cur = fields.Float(string='Usd/naira fx CBN Selling', required=False, compute='_usd_fx_cbn_sell_cur')
     us_cpi = fields.Float(string='US Cpi (index)', required=False,)
     us_ppi = fields.Float(string='US ppi (index)', required=False, )
     old_tlf = fields.Float(string='Old TLF', required=False, default=8.05)
-    new_tlf = fields.Float(string='New TLF', required=False, default=7.5)
+    new_tlf = fields.Float(string='New TLF', required=False, compute='_new_tlf', store=True,)
     us_cpi_cur = fields.Float(string='US Cpi (index)', required=False,)
     us_ppi_cur = fields.Float(string='US ppi (index)', required=False, )
     fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, )
@@ -79,10 +79,7 @@ class RateCoputation(models.TransientModel):
     capacity_charge_cur_noncompute = fields.Float(string='Capacity charge(n/mw/hr)', required=False, )
     wholesale_charge = fields.Float(string='Wholesale charge(n/mw/hr)', required=False)
     wholesale_charge_cur = fields.Float(string='Wholesale charge(n/mw/hr)', required=False, compute='_wholesale_charge_cur')
-    billing_circle = fields.Many2one(
-        comodel_name='billing.cycle',
-        string='Billing cycle',
-        required=False,)
+    billing_circle = fields.Many2one(comodel_name='billing.cycle', string='Billing cycle', required=True,)
     gas_fuel_price_dollar = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
     gas_fuel_price_dollar_cur = fields.Float(string='Gas Fuel Price($/mmbtu)', required=False, )
     gas_fuel_price_naira = fields.Float(string='Gas Fuel Price(N/mmbtu)', required=False, compute='_gas_price_naira')
@@ -166,6 +163,15 @@ class RateCoputation(models.TransientModel):
         for record in self:
             record.hours_month = record.days_month * 24
 
+
+    @api.depends('billing_circle')
+    def _new_tlf(self):
+        for record in self:
+            if record.billing_circle.transmission_loss_factor:
+                record.new_tlf = record.billing_circle.transmission_loss_factor
+            else:
+                record.new_tlf = 0
+
     @api.depends('vfcr_dollar', 'us_ppi_cur', 'us_ppi')
     def _vfcr_cur_dollar(self):
         for record in self:
@@ -174,6 +180,29 @@ class RateCoputation(models.TransientModel):
                     record.vfcr_dollar_cur = record.vfcr_dollar * record.us_ppi_cur / record.us_ppi
                 else:
                     record.vfcr_dollar_cur = 0
+
+    @api.depends('billing_circle')
+    def _usd_fx_cbn_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['hydros', 'successor_gencos', 'transcorp_ugheli', 'olorunsogo',
+                                               'omotosho', 'ibom', 'nipps', 'calabar_nipp', 'gbarain_nipp', 'mabon' ]:
+                    record.usd_fx_cbn_cur = record.billing_circle.cbn_selling_fss
+                elif record.calculation_type in ['shell']:
+                    record.usd_fx_cbn_cur = record.billing_circle.cbn_central_fss
+                elif record.calculation_type in ['agip']:
+                    record.usd_fx_cbn_cur = record.billing_circle.cbn_buying_average
+                else:
+                    record.usd_fx_cbn_cur = 0
+
+    @api.depends('billing_circle')
+    def _usd_fx_cbn_sell_cur(self):
+        for record in self:
+            if record.calculation_type:
+                if record.calculation_type in ['fipl', 'fiplo']:
+                    record.usd_fx_cbn_sell_cur = record.billing_circle.cbn_selling_fss
+                else:
+                    record.usd_fx_cbn_sell_cur = 0
 
     @api.depends('vfcr', 'usd_fx_cbn_cur', 'gas_fuel_price_dollar_cur', 'vfcr_dollar_cur', 'usd_fx_cbn_sell_cur')
     def _vfcr_cur(self):

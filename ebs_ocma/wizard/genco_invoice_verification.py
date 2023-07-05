@@ -86,6 +86,8 @@ class CreateTransfer(models.TransientModel):
     genco_capacity_payment = fields.Float('GENCO Capacity Payment')
     genco_energy_payment = fields.Float('GENCO Energy Payment')
     genco_total_payment = fields.Float('GENCO Total Payment')
+    space2 = fields.Char('  ', readonly=True, default='|')
+    difference = fields.Float(string='Difference', readonly=True, compute='_compute_difference')
 
     remarks = fields.Char(string='Comments')
 
@@ -100,3 +102,8 @@ class CreateTransfer(models.TransientModel):
         for rec in self:
             if rec.genco_verified == True:
                 rec.nbet_verified = False
+
+    @api.depends('genco_total_payment', 'nbet_total_payment')
+    def _compute_difference(self):
+        for rec in self:
+            rec.difference = rec.genco_total_payment - rec.nbet_total_payment

@@ -30,7 +30,7 @@ class ImportBudgetLineWizard(models.TransientModel):
         string='Billing_cycle_id',
         required=False)
 
-    def input_file(self):
+    def input_genco_file(self):
         if not self.files:
             raise exceptions.UserError('No file found for import.')
 
@@ -52,7 +52,7 @@ class ImportBudgetLineWizard(models.TransientModel):
                 'capacity_sent_out_mw': row['capacity_sent_out_mw'],
                 'energy_sent_out_kwh': row['energy_sent_out_kwh'],
                 'capacity_import': row['capacity_import'],
-                'energy_import': row['energy_import']
+                'energy_import': row['energy_import'],
             })
 
 
@@ -70,7 +70,7 @@ class ImportDiscoLineWizard(models.TransientModel):
         string='Billing_cycle_id',
         required=False)
 
-    def input_file(self):
+    def input_disco_file(self):
         if not self.files:
             raise exceptions.UserError('No file found for import.')
 

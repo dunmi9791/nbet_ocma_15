@@ -68,7 +68,7 @@
             name="FX (CBN Rate)"
             action="fx_cbn_view_action"
             parent="indices_inputs_action_menu"
-            sequence="2"/>
+            sequence="8"/>
         <menuitem
             id="ncpi_inputs_action_menu"
             name="NCPI"
@@ -99,6 +99,12 @@
             action="fx_cbn_buying_view_action"
             parent="indices_inputs_action_menu"
             sequence="7"/>
+        <menuitem
+            id="fx_cbn_rates_inputs_action_menu"
+            name="Fx CBN Rates"
+            action="action_cbn_rates"
+            parent="indices_inputs_action_menu"
+            sequence="2"/>
 
 
 

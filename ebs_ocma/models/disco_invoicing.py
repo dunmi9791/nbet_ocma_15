@@ -8,7 +8,8 @@ class DiscoInvoicing(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     billing_cycle_id = fields.Many2one(comodel_name="billing.cycle", string="Billing Cycle", required=False)
-    month = fields.Selection(selection=MONTHS, string='Billing Month')
+    # month = fields.Selection(selection=MONTHS, string='Billing Month')
+    month = fields.Char(string='Billing Month', compute='_get_month_name')
     date = fields.Date(string='Date', required=False)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Disco')
     

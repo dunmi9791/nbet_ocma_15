@@ -172,6 +172,13 @@
         </p>
     </field>
 </record>
+    <record id="action_cbn_rates" model="ir.actions.act_window">
+      <field name="name">CBN Rates</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">cbn.dollar.rate</field>
+      <field name="view_mode">tree,form</field>
+
+    </record>
 
 
 

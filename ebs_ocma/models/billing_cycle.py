@@ -95,9 +95,12 @@ class BillingCycle(models.Model):
         comodel_name='res.users', string='Responsible User.', default=lambda self: self.env.uid)
     payments_ids = fields.One2many('accounts.payments', compute='_circle_payments', string='Payments')
     receipts_ids = fields.One2many('accounts.payments', compute='_circle_receipts', string='Disco Receipts')
-    tlf_applied = fields.Boolean(
-        string='Tlf applied',
-        required=False)
+    tlf_applied = fields.Boolean(string='Tlf applied', required=False)
+    cbn_selling_fss = fields.Float(string='CBN Selling FSS', compute='_compute_cbn_selling')
+    cbn_selling_average = fields.Float(string='CBN Selling Average', compute='_compute_cbn_selling_average')
+    cbn_buying_fss = fields.Float(string='CBN Buying FSS', compute='_compute_cbn_buying')
+    cbn_buying_average = fields.Float(string='CBN Buying Average', compute='_compute_cbn_buying_average')
+    cbn_central_fss = fields.Float(string='CBN Central FSS', compute='_compute_cbn_central')
 
     state = fields.Selection([
         ('draft', 'New'),
@@ -107,7 +110,46 @@ class BillingCycle(models.Model):
         ('invoice_verification', 'Bills Verification'),
         ('gen_bill', 'Generate Verified Bills'),
     ], string='state', default="draft", help="A new record is in draft, once it is validated, it goes to open and then it is approved in Done state")
-    
+
+    @api.depends('date')
+    def _compute_cbn_selling(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            rate = cbnrate.search([('rate_date', '=', fss.date)], limit=1).selling_rate
+            fss.cbn_selling_fss = rate if rate else 0.0
+
+    @api.depends('date')
+    def _compute_cbn_buying(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            rate = cbnrate.search([('rate_date', '=', fss.date)], limit=1).buying_rate
+            fss.cbn_buying_fss = rate if rate else 0.0
+
+    @api.depends('date')
+    def _compute_cbn_central(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            rate = cbnrate.search([('rate_date', '=', fss.date)], limit=1).central_rate
+            fss.cbn_central_fss = rate if rate else 0.0
+
+    def _compute_cbn_selling_average(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            start_date = fss.date.replace(day=1)
+            rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', fss.date)]).mapped(
+                'selling_rate')
+            average_rate = sum(rates) / len(rates) if rates else 0.0
+            fss.cbn_selling_average = average_rate
+
+    def _compute_cbn_buying_average(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            start_date = fss.date.replace(day=1)
+            rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', fss.date)]).mapped(
+                'buying_rate')
+            average_rate = sum(rates) / len(rates) if rates else 0.0
+            fss.cbn_buying_average = average_rate
+
     def action_submit(self):
         self.state='open'
         
@@ -685,7 +727,7 @@ class GencoVerifyDollars(models.Model):
 
     name = fields.Char()
     genco_id = fields.Many2one(
-        comodel_name='res.partner',
+        comodel_name='res.partner', domain=[('is_genco', '=', True)],
         string='GENCO',
         required=False)
     capacity_payment = fields.Float(

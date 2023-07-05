@@ -11,8 +11,9 @@ class MytoRates(models.Model):
     _name = 'ocma.myto.rate'
     _description = 'Myto Rate'
     _order = 'create_date desc'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char('Description')
+    name = fields.Char('Description', track_visibility='onchange')
     approved_by = fields.Many2one(comodel_name="hr.employee", string="Approved by")
     line_ids = fields.One2many(comodel_name="hydro.rates", inverse_name="rate_id", string="Rates")
     state = fields.Selection([
@@ -39,30 +40,30 @@ class MytoRates(models.Model):
         ('gbarain_nipp', 'GBARAIN NIPP'),
         ('mabon', 'MABON (Dadin Kowa Hydro)'),
         ('direct_input', 'Direct Input'),
-    ], string='Calculation Type')
+    ], string='Calculation Type', track_visibility='onchange')
 
     usd_fx_cbn = fields.Float(
         string='Usd/naira fx CBN',
-        required=False)
+        required=False, track_visibility='onchange')
     us_cpi = fields.Float(
         string='US Cpi (index)',
-        required=False)
+        required=False, track_visibility='onchange')
     old_tlf = fields.Float(
         string='Old TLF',
-        required=False)
-    fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, digits='Ocma')
+        required=False, track_visibility='onchange')
+    fixed_o_m = fields.Float(string='Fixed O & M(n/mw/hr)', required=False, digits='Ocma', track_visibility='onchange')
     variable_o_m = fields.Float(
         string='Variable O & M(n/mw/hr)',
-        required=False)
-    fixed_o_m_dollar = fields.Float(string='Fixed O & M($/mw/hr)', required=False, digits='Ocma')
-    variable_o_m_dollar = fields.Float(string='Variable O & M($/mw/hr)', required=False, digits='Ocma')
+        required=False, track_visibility='onchange')
+    fixed_o_m_dollar = fields.Float(string='Fixed O & M($/mw/hr)', required=False, digits='Ocma', track_visibility='onchange')
+    variable_o_m_dollar = fields.Float(string='Variable O & M($/mw/hr)', required=False, digits='Ocma', track_visibility='onchange')
 
-    capital_recovery = fields.Float(string='Capital recovery(n/mw/hr)', required=False)
-    capital_recovery_dollar = fields.Float(string='Capital recovery($/mw/hr)', required=False)
-    energy_charge = fields.Float(string='Energy charge(n/mw/hr)', required=False, compute="_energy_charge")
-    capacity_charge = fields.Float(string='Capacity charge(n/mw/hr)', required=False, compute="_capacity_charge")
+    capital_recovery = fields.Float(string='Capital recovery(n/mw/hr)', required=False, track_visibility='onchange')
+    capital_recovery_dollar = fields.Float(string='Capital recovery($/mw/hr)', required=False, track_visibility='onchange')
+    energy_charge = fields.Float(string='Energy charge(n/mw/hr)', required=False, compute="_energy_charge", track_visibility='onchange')
+    capacity_charge = fields.Float(string='Capacity charge(n/mw/hr)', required=False, compute="_capacity_charge", track_visibility='onchange')
     energy_charge_dollar = fields.Float(string='Energy charge($/mw/hr)', required=False, digits='Ocma',
-                                        compute="_energy_charge_dollar" )
+                                        compute="_energy_charge_dollar", track_visibility='onchange')
     capacity_charge_dollar = fields.Float(string='Capacity charge($/mw/hr)', required=False,
                                           compute="_capacity_charge_dollar")
     wholesale_charge = fields.Float(string='Wholesale charge(n/mw/hr)', required=False, compute="_wholesale_charge")
