@@ -1,4 +1,6 @@
 from odoo import models, fields, api, _
+import datetime
+import calendar
 from calendar import monthrange
 from datetime import date
 
@@ -97,9 +99,11 @@ class BillingCycle(models.Model):
     receipts_ids = fields.One2many('accounts.payments', compute='_circle_receipts', string='Disco Receipts')
     tlf_applied = fields.Boolean(string='Tlf applied', required=False)
     cbn_selling_fss = fields.Float(string='CBN Selling FSS', compute='_compute_cbn_selling')
-    # cbn_selling_average = fields.Float(string='CBN Selling Average', compute='_compute_cbn_selling_average')
+    cbn_selling_average = fields.Float(string='CBN Selling Average',)
+    selling_average_computed = fields.Boolean(string='Selling Average Computed', default=False)
     cbn_buying_fss = fields.Float(string='CBN Buying FSS', compute='_compute_cbn_buying')
-    # cbn_buying_average = fields.Float(string='CBN Buying Average', compute='_compute_cbn_buying_average')
+    cbn_buying_average = fields.Float(string='CBN Buying Average', )
+    buying_average_computed = fields.Boolean(string='Buying Average Computed', default=False)
     cbn_central_fss = fields.Float(string='CBN Central FSS', compute='_compute_cbn_central')
 
     state = fields.Selection([
@@ -132,23 +136,39 @@ class BillingCycle(models.Model):
             rate = cbnrate.search([('rate_date', '=', fss.date)], limit=1).central_rate
             fss.cbn_central_fss = rate if rate else 0.0
 
-    # def _compute_cbn_selling_average(self):
-    #     cbnrate = self.env['cbn.dollar.rate']
-    #     for fss in self:
-    #         start_date = fss.date.replace(day=1)
-    #         rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', fss.date)]).mapped(
-    #             'selling_rate')
-    #         average_rate = sum(rates) / len(rates) if rates else 0.0
-    #         fss.cbn_selling_average = average_rate
-    #
-    # def _compute_cbn_buying_average(self):
-    #     cbnrate = self.env['cbn.dollar.rate']
-    #     for fss in self:
-    #         start_date = fss.date.replace(day=1)
-    #         rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', fss.date)]).mapped(
-    #             'buying_rate')
-    #         average_rate = sum(rates) / len(rates) if rates else 0.0
-    #         fss.cbn_buying_average = average_rate
+    @api.depends('date')
+    def compute_cbn_selling_average(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            if not isinstance(fss.date, date):
+                continue
+            start_date = fss.date.replace(day=1)
+            year = fss.date.year
+            month = fss.date.month
+            _, num_days = calendar.monthrange(year, month)
+            end_date = date(year, month, num_days)
+            rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', end_date)]).mapped(
+                'selling_rate')
+            average_rate = sum(rates) / len(rates) if rates else 0.0
+            fss.cbn_selling_average = average_rate
+            fss.selling_average_computed = True
+
+    @api.depends('date')
+    def compute_cbn_buying_average(self):
+        cbnrate = self.env['cbn.dollar.rate']
+        for fss in self:
+            if not isinstance(fss.date, date):
+                continue
+            start_date = fss.date.replace(day=1)
+            year = fss.date.year
+            month = fss.date.month
+            _, num_days = calendar.monthrange(year, month)
+            end_date = date(year, month, num_days)
+            rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', end_date)]).mapped(
+                'buying_rate')
+            average_rate = sum(rates) / len(rates) if rates else 0.0
+            fss.cbn_buying_average = average_rate
+            fss.buying_average_computed = True
 
     def action_submit(self):
         self.state='open'
@@ -932,7 +952,7 @@ class BCDiscoParaemeter(models.Model):
     percent_shared = fields.Float(string='% Shared', compute='_compute_percent_shared')
     
     invoice_value = fields.Float(string='Invoice Value', required=False, compute='_compute_invoice_value')
-    capacity_charge = fields.Float(string='Capacity Charge', required=False, compute='_compute_capacity_charge')
+    capacity_charge = fields.Float(string='Capacity Charge', required=False, compute='_compute_capacity_charge', store=True)
     energy_charge = fields.Float(string='Energy Charge', required=False, )
     disco = fields.Boolean(string='Disco', required=False, compute='_is_disco')
     capacity_charge_compute = fields.Boolean(string='Capacity charge computed',)
