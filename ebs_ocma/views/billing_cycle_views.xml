@@ -67,8 +67,8 @@
                                 <field name="cbn_selling_fss"/>
                                 <field name="cbn_central_fss"/>
                                 <field name="cbn_buying_fss"/>
-                                <field name="cbn_selling_average"/>
-                                <field name="cbn_buying_average"/>
+<!--                                <field name="cbn_selling_average"/>-->
+<!--                                <field name="cbn_buying_average"/>-->
 <!--                                <field name="azura_fx_value"/>-->
                             </group>
                             <group>
