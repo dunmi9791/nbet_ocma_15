@@ -16,4 +16,4 @@ class HrContractInherit(models.Model):
     def _compute_wage(self):
         for record in self:
             # Add your computation logic here.
-            record.wage = record.employee_id.rank_id.salary
+            record.wage = record.employee_id.rank_id.salary_range / 12

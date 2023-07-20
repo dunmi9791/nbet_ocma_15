@@ -62,6 +62,7 @@
                                 <field name="hours_in_month"/>
                                 <field name="transmission_loss_factor" />
                                 <field name="tlf_applied" widget="boolean_toggle"/>
+                                <field name="date_average_compute"/>
                                 <field name="selling_average_computed" invisible="1"/>
                                 <field name="buying_average_computed" invisible="1"/>
                             </group>

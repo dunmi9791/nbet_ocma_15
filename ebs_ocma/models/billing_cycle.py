@@ -58,6 +58,9 @@ class BillingCycle(models.Model):
     date_end = fields.Date(
         string='End Date',
         required=False)
+    date_average_compute = fields.Date(
+        string='Date for Average Computation',
+        required=False, default=lambda self: fields.Date.context_today(self))
     ref_no = fields.Char(
         string='Reference Number',
         required=False)
@@ -146,7 +149,8 @@ class BillingCycle(models.Model):
             year = fss.date.year
             month = fss.date.month
             _, num_days = calendar.monthrange(year, month)
-            end_date = date(year, month, num_days)
+            # end_date = date(year, month, num_days)
+            end_date = fss.date_average_compute
             rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', end_date)]).mapped(
                 'selling_rate')
             average_rate = sum(rates) / len(rates) if rates else 0.0
@@ -163,7 +167,8 @@ class BillingCycle(models.Model):
             year = fss.date.year
             month = fss.date.month
             _, num_days = calendar.monthrange(year, month)
-            end_date = date(year, month, num_days)
+            # end_date = date(year, month, num_days)
+            end_date = fss.date_average_compute
             rates = cbnrate.search([('rate_date', '>=', start_date), ('rate_date', '<=', end_date)]).mapped(
                 'buying_rate')
             average_rate = sum(rates) / len(rates) if rates else 0.0
