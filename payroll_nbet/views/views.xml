@@ -27,5 +27,22 @@
 
           </field>
       </record>
+      <record id="employee_grade_form_inherit" model="ir.ui.view">
+          <field name="name">employee.grade.form.inherit</field>
+          <field name="model">grade.grade</field>
+          <field name="inherit_id" ref="hr_grade_rank.view_employee_grade_form"/>
+          <field name="arch" type="xml">
+                  <xpath expr="//field[@name='rank_ids']" position="replace">
+                            <field name="rank_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="salary"/>
+                                    <field name="description"/>
+                                </tree>
+                            </field>
+
+          </xpath>
+          </field>
+      </record>
   </data>
 </odoo>
