@@ -20,11 +20,12 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr_contract', 'hr_grade_rank'],
+    'depends': ['base', 'hr_contract', 'hr_grade_rank', 'hr', 'payslip_payment_app', 'hr_payroll', 'hr_payroll_account',],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
+        'data/action.xml',
         'views/views.xml',
         'views/templates.xml',
     ],

@@ -102,6 +102,7 @@ class BillingCycle(models.Model):
     receipts_ids = fields.One2many('accounts.payments', compute='_circle_receipts', string='Disco Receipts')
     tlf_applied = fields.Boolean(string='Tlf applied', required=False)
     cbn_selling_fss = fields.Float(string='CBN Selling FSS', compute='_compute_cbn_selling')
+    cbn_gas = fields.Float(string='Gas FX Rate')
     cbn_selling_average = fields.Float(string='CBN Selling Average',)
     selling_average_computed = fields.Boolean(string='Selling Average Computed', default=False)
     cbn_buying_fss = fields.Float(string='CBN Buying FSS', compute='_compute_cbn_buying')

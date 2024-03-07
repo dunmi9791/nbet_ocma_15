@@ -14,19 +14,19 @@
 
         </field>
     </record>
-      <record id="employee_rank_tree_inherit" model="ir.ui.view">
-          <field name="name">employee.rank.tree.inherit</field>
-          <field name="model">rank.rank</field>
-          <field name="inherit_id" ref="hr_grade_rank.view_employee_rank_tree"/>
-          <field name="arch" type="xml">
+<!--      <record id="employee_rank_tree_inherit" model="ir.ui.view">-->
+<!--          <field name="name">employee.rank.tree.inherit</field>-->
+<!--          <field name="model">rank.rank</field>-->
+<!--          <field name="inherit_id" ref="hr_grade_rank.view_employee_rank_tree"/>-->
+<!--          <field name="arch" type="xml">-->
 
-              <xpath expr="//field[@name='salary_range']" position="replace">
-                  <!-- Add new fields here -->
-                  <field name="salary"/>
-              </xpath>
+<!--              <xpath expr="//field[@name='salary_range']" position="replace">-->
+<!--                  &lt;!&ndash; Add new fields here &ndash;&gt;-->
+<!--                  <field name="salary"/>-->
+<!--              </xpath>-->
 
-          </field>
-      </record>
+<!--          </field>-->
+<!--      </record>-->
       <record id="employee_grade_form_inherit" model="ir.ui.view">
           <field name="name">employee.grade.form.inherit</field>
           <field name="model">grade.grade</field>
@@ -36,7 +36,7 @@
                             <field name="rank_ids">
                                 <tree>
                                     <field name="name"/>
-                                    <field name="salary"/>
+                                    <field name="salary_range"/>
                                     <field name="description"/>
                                 </tree>
                             </field>
@@ -44,5 +44,6 @@
           </xpath>
           </field>
       </record>
+
   </data>
 </odoo>
