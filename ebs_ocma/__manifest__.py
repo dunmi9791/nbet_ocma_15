@@ -57,4 +57,7 @@
     'demo': [
         'demo/ocma_demo.xml',
     ],
+    'external_dependencies': {
+        'python': ['openpyxl'],
+    },
 }
